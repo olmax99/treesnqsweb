@@ -1,0 +1,31 @@
+apiVersion: skaffold/v1
+kind: Config
+build:
+  tagPolicy:
+    sha256: {}
+  artifacts:
+  - image: djangoapp
+    context: djangoapp
+deploy:
+  helm:
+    releases:
+    - name: djangohelm
+      chartPath: djangohelm
+      #wait: true
+      #valuesFiles:
+      #- helm-skaffold-values.yaml
+      # UNCOMMENT FOR DEPENDENCY BUILD
+      # skipBuildDependencies: true # Skip helm dep build
+      values:
+        image: djangoapp
+        # UNCOMMENT FOR DEPENDENCY BUILD
+        # "skaffold-helm-subchart.image": gcr.io/k8s-skaffold/skaffold-helm
+      #recreatePods will pass --recreate-pods to helm upgrade
+      #recreatePods: true
+      #overrides builds an override values.yaml file to run with the helm deploy
+      #overrides:
+      # some:
+      #   key: someValue
+      #setValues get appended to the helm deploy with --set.  
+      #setValues:
+        #some.key: someValue

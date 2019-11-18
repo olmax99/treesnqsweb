@@ -1,0 +1,20 @@
+apiVersion: v1
+entries:
+  skaffold-helm:
+  - apiVersion: v1
+    created: "2019-11-18T15:38:27.656466516+01:00"
+    description: A Helm chart for Kubernetes
+    digest: d0c92c863a5efcf07ec5f231156cfee3dcfb56430a5256bd8f998332a5eb5bfb
+    name: skaffold-helm
+    urls:
+    - helmdist/skaffold-helm-0.1.1.tgz
+    version: 0.1.1
+  - apiVersion: v1
+    created: "2019-11-18T15:38:27.656138124+01:00"
+    description: A Helm chart for Kubernetes
+    digest: 05840642cbe86d5d9956dac4f201ec1d313792fb921ecce9f10baf710330dfd3
+    name: skaffold-helm
+    urls:
+    - helmdist/skaffold-helm-0.1.0.tgz
+    version: 0.1.0
+generated: "2019-11-18T15:38:27.655412497+01:00"
