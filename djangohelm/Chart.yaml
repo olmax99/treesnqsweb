@@ -1,4 +1,4 @@
 apiVersion: v1
 description: A Helm chart of TreesN'Qs Django webapp
 name: djangohelm
-version: 0.0.0
+version: 0.0.1

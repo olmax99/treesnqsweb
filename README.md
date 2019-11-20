@@ -24,26 +24,25 @@ For local development, the following components are required on the local machin
 
 ## Quickstart Development
 
-Always use PYTHONPATH for manual Django manage tasks,
-e.g. each the built-in Django server via `PYTHONPATH=$(pwd) python -m pipenv run python manage.py runserver 8081`.
+Use PYTHONPATH for manual Django manage.py tasks, e.g. reach the built-in Django server via:
+`PYTHONPATH=$(pwd) python -m pipenv run python manage.py runserver 8081`.
+
+### Step 1: Fetch subcharts
+
+```
+$ make charts
+
+```
 
 ### Step 1: Initialize local helm repo
 
-To use this repository as a k8s charts repository for deploy your apps you have to configure helm adding it:
-```
-helm repo add github https://raw.githubusercontent.com/olmax99/treesnqsweb/master/helmdist/
-
-```
-
-Or use the local repo for development:
+Initialize the local repo for development:
 ```
 $ minikube start
 
 $ helm serve
 
-$ helm package -u -d helmdist ./djangohelm
-
-$ helm repo index .
+$ make dist
 
 ```
 

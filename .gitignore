@@ -100,4 +100,5 @@ dmypy.json
 *.parquet
 *.txt
 *.pid
+djangohelm/charts/*
 

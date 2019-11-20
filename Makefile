@@ -11,6 +11,9 @@ help:
 dev:
 	skaffold dev
 
+charts:
+	helm fetch --untar -d djangohelm/charts/ stable/postgresql
+
 .PHONY: dist # Update and build packages locally. Ensure that local helm server is up.
 package:
 	for x in */requirements.*; do sed -i -e "s/${remote}/${local}/g" $$x; done
@@ -19,4 +22,4 @@ package:
 
 .PHONY: index # Generate the YAML index to serve the available packages.
 dist: package
-	helm repo index packages
+	helm repo index .
