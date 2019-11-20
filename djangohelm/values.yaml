@@ -1,8 +1,18 @@
+## Global Docker image parameters
+## Please, note that this will override the image parameters, including dependencies, configured to use the global value
+## Current available global Docker image parameters: imageRegistry and imagePullSecrets
+##
+# global:
+#   imageRegistry: myRegistryName
+#   imagePullSecrets:
+#     - myRegistryKeySecretName
+#   storageClass: myStorageClass
+
 # Default values for djangohelm.
-# This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 replicaCount: 1
-image: djangoapp:0.1
+image: djangoapp:0.2
+# Will only search for local image in Minikube
 pullPolicy: Never
 # This is the helm convention on declaring images
 # image:
@@ -10,10 +20,65 @@ pullPolicy: Never
 #   tag: stable
 #   pullPolicy: IfNotPresent
 service:
-  name: nginx
   type: NodePort
+  name: djangoapp
+  ## HTTP Port
   externalPort: 8000
   internalPort: 8000
+  # TODO: Configure service according to best practise
+  ## HTTPS Port
+  # httpsPort: 443
+  ## HTTPS Target Port
+  ## defaults to https unless overridden to the specified port.
+  ## if you want the target port to be "http" or "80" you can specify that here.
+  # httpsTargetPort: https
+  ## metrics Port
+  # metricsPort: 9117
+  ##
+  ## nodePorts:
+  ##   http: <to set explicitly, choose port between 30000-32767>
+  ##   https: <to set explicitly, choose port between 30000-32767>
+  ##   metrics: <to set explicitly, choose port between 30000-32767>
+  # nodePorts:
+  #   http: ""
+  #   https: ""
+  #   metrics: ""
+  ## Enable client source IP preservation
+  ## ref http://kubernetes.io/docs/tasks/access-application-cluster/create-external-load-balancer/#preserving-the-client-source-ip
+  ##
+  # externalTrafficPolicy: Cluster
+  # annotations: {}
+  ## Extra ports to expose (normally used with the `sidecar` value)
+  # extraPorts:
+
+## Allow health checks to be pointed at the https port
+# healthcheckHttps: false
+
+## Configure extra options for liveness and readiness probes
+## ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-probes/#configure-probes)
+# livenessProbe:
+#   initialDelaySeconds: 120
+#   periodSeconds: 10
+#   timeoutSeconds: 5
+#   failureThreshold: 6
+#   successThreshold: 1
+# readinessProbe:
+#   initialDelaySeconds: 30
+#   periodSeconds: 10
+#   timeoutSeconds: 5
+#   failureThreshold: 6
+#   successThreshold: 1
+## If using an HTTPS-terminating load-balancer, the probes may need to behave
+## like the balancer to prevent HTTP 302 responses.  According to the Kubernetes
+## docs, 302 should be considered "successful", but this issue on GitHub
+## (https://github.com/kubernetes/kubernetes/issues/47893) shows that it isn't.
+# livenessProbeHeaders:
+# - name: X-Forwarded-Proto
+#   value: https
+# readinessProbeHeaders:
+# - name: X-Forwarded-Proto
+#   value: https
+
 ingress:
   enabled: false
   # Used to create an Ingress record.
@@ -27,11 +92,12 @@ ingress:
     # - secretName: chart-example-tls
     #   hosts:
     #     - chart-example.local
+
 resources: {}
-  # We usually recommend not to specify default resources and to leave this as a conscious
-  # choice for the user. This also increases chances charts run on environments with little
-  # resources, such as Minikube. If you do want to specify resources, uncomment the following
-  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  ## We usually recommend not to specify default resources and to leave this as a conscious
+  ## choice for the user. This also increases chances charts run on environments with little
+  ## resources, such as Minikube. If you do want to specify resources, uncomment the following
+  ## lines, adjust them as necessary, and remove the curly braces after 'resources:'.
   # limits:
   #  cpu: 100m
   #  memory: 128Mi
@@ -39,5 +105,52 @@ resources: {}
   #  cpu: 100m
   #  memory: 128Mi
 
-subchart:
-    enabled: true    
+##
+## PostgreSQL chart configuration
+##
+## https://github.com/helm/charts/tree/master/stable/postgresql
+##
+## Whether to deploy a postgresql server to satisfy the applications database requirements.
+## To use an external database set this to false and configure the externalDatabase parameters
+# TODO: Implement postgresql settings
+postgresql:
+    enabled: false
+    # replication:
+    #   enabled: false
+    #   slaveReplicas: 1
+    #   synchronousCommit: "off"
+    #   numSynchronousReplicas: 0
+    # metrics:
+    #   enabled: false
+
+    ## Create a database and a database user
+    ##
+    # db:
+    #   name: djangoapp
+    #   user: django
+    ## If the password is not specified, postgresql will generates a random password
+    ##
+    # password:
+
+    ## PostgreSQL admin password
+    ##
+    # rootUser:
+    #   password:
+
+    ## Enable persistence using Persistent Volume Claims
+    ## ref: http://kubernetes.io/docs/user-guide/persistent-volumes/
+    ##
+    # master:
+    #   persistence:
+    #     enabled: true
+    ## mariadb data Persistent Volume Storage Class
+    ## If defined, storageClassName: <storageClass>
+    ## If set to "-", storageClassName: "", which disables dynamic provisioning
+    ## If undefined (the default) or set to null, no storageClassName spec is
+    ##   set, choosing the default provisioner.  (gp2 on AWS, standard on
+    ##   GKE, AWS & OpenStack)
+    ##
+    #   storageClass: "-"
+    #     accessMode: ReadWriteOnce
+    #     size: 8Gi
+

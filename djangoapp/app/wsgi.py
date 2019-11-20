@@ -12,7 +12,7 @@ import sys
 
 from django.core.wsgi import get_wsgi_application
 
-# TODO: Verify if needed in DOcker
+# TODO: Verify if needed in Docker
 # Ensures that parent path is top directory - NEEDED FOR DJANGO BUILT-IN SERVER
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 

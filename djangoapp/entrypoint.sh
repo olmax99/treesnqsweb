@@ -3,10 +3,10 @@ set -e
 
 #-------------------- Gunicorn Parameters-----------------------------
 
-# Accepting wsgi.py in either '/app' or '/app/app'
-if [ -f /app/app/wsgi.py ]; then
+# Accepting wsgi.py in either '/opt/app' or '/opt/app/app'
+if [ -f /opt/app/app/wsgi.py ]; then
     DEFAULT_MODULE_NAME=app.wsgi
-elif [ -f /app/wsgi.py ]; then
+elif [ -f /opt/app/wsgi.py ]; then
     DEFAULT_MODULE_NAME=wsgi
 fi
 # Specifiy 'MODULE_NAME' as environment variable or take wsgi.py
@@ -17,9 +17,9 @@ VARIABLE_NAME=${VARIABLE_NAME:-application}
 export APP_MODULE=${APP_MODULE:-"$MODULE_NAME:$VARIABLE_NAME"}
 
 # Searching for gunicorn_conf in '/', '/app', '/app/app'
-if [ -f /app/gunicorn_conf.py ]; then
+if [ -f /opt/app/gunicorn_conf.py ]; then
     DEFAULT_GUNICORN_CONF=/app/gunicorn_conf.py
-elif [ -f /app/app/gunicorn_conf.py ]; then
+elif [ -f /opt/app/app/gunicorn_conf.py ]; then
     DEFAULT_GUNICORN_CONF=/app/app/gunicorn_conf.py
 else
     DEFAULT_GUNICORN_CONF=/gunicorn_conf.py

@@ -1,20 +1,12 @@
 apiVersion: v1
 entries:
-  skaffold-helm:
+  djangohelm:
   - apiVersion: v1
-    created: "2019-11-18T15:38:27.656466516+01:00"
-    description: A Helm chart for Kubernetes
-    digest: d0c92c863a5efcf07ec5f231156cfee3dcfb56430a5256bd8f998332a5eb5bfb
-    name: skaffold-helm
+    created: "2019-11-18T20:39:40.734108705+01:00"
+    description: A Helm chart of TreesN'Qs Django webapp
+    digest: 92ac0fe33ed4c95e4ef640057c9cc1b9e575b3dc3836a0460ca4f57aae538a2c
+    name: djangohelm
     urls:
-    - helmdist/skaffold-helm-0.1.1.tgz
-    version: 0.1.1
-  - apiVersion: v1
-    created: "2019-11-18T15:38:27.656138124+01:00"
-    description: A Helm chart for Kubernetes
-    digest: 05840642cbe86d5d9956dac4f201ec1d313792fb921ecce9f10baf710330dfd3
-    name: skaffold-helm
-    urls:
-    - helmdist/skaffold-helm-0.1.0.tgz
-    version: 0.1.0
-generated: "2019-11-18T15:38:27.655412497+01:00"
+    - helmdist/djangohelm-0.0.0.tgz
+    version: 0.0.0
+generated: "2019-11-18T20:39:40.733738572+01:00"

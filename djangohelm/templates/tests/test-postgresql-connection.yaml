@@ -1,0 +1,29 @@
+{{- if .Values.postgresql.enabled }}
+apiVersion: v1
+kind: Pod
+metadata:
+  name: "{{ .Release.Name }}-credentials-test"
+  annotations:
+    "helm.sh/hook": test-success
+spec:
+  containers:
+  - name: {{ .Release.Name }}-credentials-test
+    image: {{ template "djangohelm.image" . }}
+    imagePullPolicy: {{ .Values.image.pullPolicy | quote }}
+    env:
+      - name: PGSQL_HOST
+        value: {{ template "postgresql.fullname" . }}
+      - name: PGSQL_PORT
+        value: "3306"
+      - name: DJANGO_DB_NAME
+        value: {{ default "" .Values.postgresql.db.name | quote }}
+      - name: DJANGO_DB_USER
+        value: {{ default "" .Values.postgresql.db.user | quote }}
+      - name: DJANGO_DB_PASSWORD
+        valueFrom:
+          secretKeyRef:
+            name: {{ template "postgresql.fullname" . }}
+            key: postgresql-password
+    command: ["sh", "-c", "psql --host=$PGSQL_HOST --port=$PGSQL_PORT --user=$DJANGO_DB_USER --password=$DJANGO_DB_PASSWORD"]
+  restartPolicy: Never
+{{- end }}
