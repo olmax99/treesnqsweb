@@ -27,6 +27,22 @@ For local development, the following components are required on the local machin
 Use PYTHONPATH for manual Django manage.py tasks, e.g. reach the built-in Django server via:
 `PYTHONPATH=$(pwd) python -m pipenv run python manage.py runserver 8081`.
 
+### Packages
+
+To use this repository as a k8s charts repository for deploying the Djangoapp, configure helm:
+
+```
+$ helm repo add treesnqsweb https://raw.githubusercontent.com/olmax99/treesnqsweb/master/helmdist
+
+$ helm repo list
+# EXPECTED
+NAME            URL                                                                  
+stable          https://kubernetes-charts.storage.googleapis.com                     
+local           http://127.0.0.1:8879/charts                                         
+treesnqsweb     https://raw.githubusercontent.com/olmax99/treesnqsweb/master/helmdist
+
+```
+
 ### Step 1: Fetch subcharts
 
 ```
@@ -55,7 +71,27 @@ $ docker build -t djangoapp:0.2 ./djangoapp
 
 ```
 
-### Step 3: Run in development mode
+### Step 3: Adjust the values
+
+Provide values for deploying `djangohelm`. As a minimum change the database credentials and resource requirements:
+```
+...
+postgresqlUsername: < leave as postgres for super user >
+postgresqlPassword: < super_secret >
+...
+postgresqlDatabase: < djangoapp >
+postgresqlDataDir: < /path/to/your/project/postgresql/data >
+...
+resources:
+  requests:
+  memory: < official recommendation is 1000Mi >
+  cpu: < e.g. 1000m >
+
+```
+
+**NOTE:** The host name of the database is `localhost` by default unless the external database option is activated.
+
+### Step 4: Run in development mode
 
 ```
 $ skaffold dev
@@ -69,7 +105,30 @@ $ skaffold dev
 
 - How to configure the connection credentials and pass them on from main Chart?
 
+The main chart `values.yaml` file contains the appropriate subchart sections, which start according to the subcharts'
+dependeny name. E.g.
+```
+...
+postgresql:
+  <parameter to override>: <your paramter>
+  ...
 
+```
+**HOSTNAME:** Is standard `localhost` unless the option **external database** is set.
+
+**POSTGRES_USER:** Directly defined in `.Values.postgresql.postgresqlUsername`, which is a superuser when named `postgres`.
+                   If name is changed, you also need to change `.Values.postgresql.postgresqlPostgresPassword`.
+                   
+**POSTGRES_PASSWORD:** The default behavior for `_helper.tpl` is to set `true` for `{{- define "postgresql.createSecret" -}}`.
+                   This will activate the `secrets.yaml` file, which in turn gets the `postgresql.password` from the `_helpers.tpl`
+                   if `.Values.postgresqlPassword` exist or provides a random alphanumeric with 10 chars instead.
+
+**POSTGRESQL_PORT_NUMBER:** Defined in `_helper.tpl`, and coming from `.Values.postgresql.service.port`.
+                            
+**POSTGRES_DB:** Defined in `_helper.tpl`, and coming from `.Values.postgresqlDatabase`.
+
+
+- Which `values.yaml` is being used by `skaffold dev` and `skaffold run`? And how to switch between dev and (multiple) prod?
 
 
 - What is the `skaffold builder` indicated in `.build.artifacts.image` and `.deploy.helm.releases.values.image`?
@@ -97,6 +156,7 @@ being used is always the top one indicated in `index.yaml`.
 
 - What is the entry `ALLOWED_HOSTS` in `djangoapp/settings.py` being used for? 
 
+
 #### Useful resources
 
 - [https://pythonspeed.com/articles/gunicorn-in-docker/](https://pythonspeed.com/articles/gunicorn-in-docker/)
@@ -120,7 +180,8 @@ being used is always the top one indicated in `index.yaml`.
 
 ### Djangohelm Parameters
 
-The following table lists the configurable parameters of the Djangohelm chart and their default values.
+The following table lists the configurable parameters of the Djangohelm main chart and subcharts
+configurable from main chart `values.yaml`.
 
 **TODO:** Verify that all relevant Parameters are configurable including for postgresql.
 

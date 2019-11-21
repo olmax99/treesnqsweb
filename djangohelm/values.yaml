@@ -1,6 +1,7 @@
 ## Global Docker image parameters
 ## Please, note that this will override the image parameters, including dependencies, configured to use the global value
 ## Current available global Docker image parameters: imageRegistry and imagePullSecrets
+## NOTE: Global variables of parent charts take precedence over global variables in dependent charts.
 ##
 # global:
 #   imageRegistry: myRegistryName
@@ -105,52 +106,199 @@ resources: {}
   #  cpu: 100m
   #  memory: 128Mi
 
-##
 ## PostgreSQL chart configuration
 ##
 ## https://github.com/helm/charts/tree/master/stable/postgresql
+## https://engineering.bitnami.com/articles/create-a-production-ready-postgresql-cluster-bitnami-kubernetes-and-helm.html
 ##
 ## Whether to deploy a postgresql server to satisfy the applications database requirements.
 ## To use an external database set this to false and configure the externalDatabase parameters
-# TODO: Implement postgresql settings
+# TODO: Implement postgresql credential settings
 postgresql:
-    enabled: false
-    # replication:
-    #   enabled: false
-    #   slaveReplicas: 1
-    #   synchronousCommit: "off"
-    #   numSynchronousReplicas: 0
-    # metrics:
-    #   enabled: false
-
-    ## Create a database and a database user
-    ##
-    # db:
-    #   name: djangoapp
-    #   user: django
-    ## If the password is not specified, postgresql will generates a random password
-    ##
-    # password:
-
-    ## PostgreSQL admin password
-    ##
-    # rootUser:
-    #   password:
-
-    ## Enable persistence using Persistent Volume Claims
-    ## ref: http://kubernetes.io/docs/user-guide/persistent-volumes/
-    ##
-    # master:
-    #   persistence:
-    #     enabled: true
-    ## mariadb data Persistent Volume Storage Class
-    ## If defined, storageClassName: <storageClass>
-    ## If set to "-", storageClassName: "", which disables dynamic provisioning
-    ## If undefined (the default) or set to null, no storageClassName spec is
-    ##   set, choosing the default provisioner.  (gp2 on AWS, standard on
-    ##   GKE, AWS & OpenStack)
-    ##
-    #   storageClass: "-"
-    #     accessMode: ReadWriteOnce
-    #     size: 8Gi
+  # requirements condition
+  enabled: false
+  # image:
+  #   registry: docker.io
+  #   repository: bitnami/postgresql
+  #   tag: 11.6.0-debian-9-r0
+  # pullPolicy: IfNotPresent
+  # pullSecrets:
+  #   - myRegistryKeySecretName
+  # debug: false
+  # nameOverride:
+  # fullnameOverride:
+  # volumePermissions:
+  #   enabled: true
+  #   image:
+  #     registry: docker.io
+  #     repository: bitnami/minideb
+  #     tag: stretch
+  #   pullPolicy: Always
+  #   pullSecrets:
+  #     - myRegistryKeySecretName
+  #   securityContext:
+  #     runAsUser: 0
+  # schedulerName:
+  # securityContext:
+  #   enabled: true
+  #   fsGroup: 1001
+  #   runAsUser: 1001
+  # serviceAccount:
+  #   enabled: false
+  #   name:
+  # replication:
+  #   enabled: false
+  #   user: repl_user
+  #   password: repl_password
+  #   slaveReplicas: 1
+  #   synchronousCommit: "off"
+  #   numSynchronousReplicas: 0
+  #   applicationName: my_application
+  # postgresqlPostgresPassword:
+  postgresqlUsername: < leave as postgres for standard super user access >
+  postgresqlPassword: < super_secret >
+  # existingSecret: secret
+  # usePasswordFile: false
+  postgresqlDatabase: < djangoapp >
+  postgresqlDataDir: < /path/to/your/project/postgresql/data >
+  # postgresqlInitdbArgs:
+  # postgresqlInitdbWalDir:
+  # postgresqlConfiguration:
+  # postgresqlExtendedConf:
+  # pgHbaConfiguration:
+  # configurationConfigMap:
+  # extendedConfConfigMap:
+  # initdbScripts:
+  # initdbScriptsConfigMap:
+  # initdbScriptsSecret:
+  # initdbUser:
+  # initdbPassword:
+  # terminationGracePeriodSeconds: 30
+  # ldap:
+  #   enabled: false
+  #   url: ""
+  #   server: ""
+  #   port: ""
+  #   prefix: ""
+  #   suffix: ""
+  #   baseDN: ""
+  #   bindDN: ""
+  #   bind_password:
+  #   search_attr: ""
+  #   search_filter: ""
+  #   scheme: ""
+  #   tls: false
+  service:
+  #   type: ClusterIP
+  #   clusterIP: None
+    port: < leave as default port 5432 >
+  #   nodePort:
+  #   annotations: {}
+  #   loadBalancerIP:
+  #   loadBalancerSourceRanges:
+  # persistence:
+  #   enabled: true
+  #   existingClaim:
+  #   mountPath: /bitnami/postgresql
+  #   subPath: ""
+  #   storageClass: "-"
+  #   accessModes:
+  #     - ReadWriteOnce
+  #   size: 8Gi
+  #   annotations: {}
+  # updateStrategy:
+  #   type: RollingUpdate
+  # master:
+  #   nodeSelector: {}
+  #   affinity: {}
+  #   tolerations: []
+  #   labels: {}
+  #   annotations: {}
+  #   podLabels: {}
+  #   podAnnotations: {}
+  #   extraInitContainers:
+  # extraVolumeMounts: []
+  #   extraVolumes: []
+  # slave:
+  #   nodeSelector: {}
+  #   affinity: {}
+  #   tolerations: []
+  #   labels: {}
+  #   annotations: {}
+  #   podLabels: {}
+  #   podAnnotations: {}
+  #   extraInitContainers:
+  #   extraVolumeMounts: []
+  #   extraVolumes: []
+  resources:
+    requests:
+      memory: < official recommendation is 1000Mi >
+      cpu: < e.g. 1000m >
+  # networkPolicy:
+  #   enabled: false
+  #   allowExternal: true
+  # livenessProbe:
+  #   enabled: true
+  #   initialDelaySeconds: 30
+  #   periodSeconds: 10
+  #   timeoutSeconds: 5
+  #   failureThreshold: 6
+  #   successThreshold: 1
+  # readinessProbe:
+  #   enabled: true
+  #   initialDelaySeconds: 5
+  #   periodSeconds: 10
+  #   timeoutSeconds: 5
+  #   failureThreshold: 6
+  #   successThreshold: 1
+  # metrics:
+  #   enabled: false
+  #   resources: {}
+  #   service:
+  #     type: ClusterIP
+  #     annotations:
+  #       prometheus.io/scrape: "true"
+  #       prometheus.io/port: "9187"
+  #     loadBalancerIP:
+  #   serviceMonitor:
+  #     enabled: false
+  #     additionalLabels: {}
+  #     namespace: monitoring
+  #     interval: 30s
+  #     scrapeTimeout: 10s
+  #   image:
+  #     registry: docker.io
+  #     repository: bitnami/postgres-exporter
+  #     tag: 0.7.0-debian-9-r12
+  #     pullPolicy: IfNotPresent
+  #     pullSecrets:
+  #       - myRegistryKeySecretName
+  #   customMetrics:
+  #     pg_database:
+  #     query: "SELECT d.datname AS name, CASE WHEN pg_catalog.has_database_privilege(d.datname, 'CONNECT') THEN pg_catalog.pg_database_size(d.datname) ELSE 0 END AS size FROM pg_catalog.pg_database d where datname not in ('template0', 'template1', 'postgres')"
+  #     metrics:
+  #       - name:
+  #           usage: "LABEL"
+  #           description: "Name of the database"
+  #       - size_bytes:
+  #           usage: "GAUGE"
+  #           description: "Size of the database in bytes"
+  #   securityContext:
+  #     enabled: false
+  #     runAsUser: 1001
+  #   livenessProbe:
+  #     enabled: true
+  #     initialDelaySeconds: 5
+  #     periodSeconds: 10
+  #     timeoutSeconds: 5
+  #     failureThreshold: 6
+  #     successThreshold: 1
+  #   readinessProbe:
+  #     enabled: true
+  #     initialDelaySeconds: 5
+  #     periodSeconds: 10
+  #     timeoutSeconds: 5
+  #     failureThreshold: 6
+  #     successThreshold: 1
+  #  extraEnv: []
 
