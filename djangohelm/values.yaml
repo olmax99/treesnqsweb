@@ -52,6 +52,20 @@ service:
   ## Extra ports to expose (normally used with the `sidecar` value)
   # extraPorts:
 
+# TODO: Implement and test option for external database (currently not supported)
+externalDatabase:
+## All of these values are only used when postgresql.enabled is set to false
+  ## Database host
+  host: localhost
+  ## non-root Username for Wordpress Database
+  user: django_user
+  ## Database password
+  password: ""
+  ## Database name
+  database: django_app
+  ## Database port number
+  port: 5432
+
 ## Allow health checks to be pointed at the https port
 # healthcheckHttps: false
 
@@ -125,7 +139,7 @@ postgresql:
   # pullSecrets:
   #   - myRegistryKeySecretName
   # debug: false
-  # nameOverride:
+  nameOverride: < Set the Hostname for the postgresql container >
   # fullnameOverride:
   # volumePermissions:
   #   enabled: true
