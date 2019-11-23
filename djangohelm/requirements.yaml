@@ -1,3 +1,8 @@
-# dependencies:
-#   - name: subchart
-#     condition: subchart.enabled
+dependencies:
+  - name: postgresql
+    version: 7.4.0
+    tags:
+    - postgresql-database
+    repository: https://raw.githubusercontent.com/olmax99/treesnqsweb/master/helmdist
+    alias: postgresql
+    condition: postgresql.enabled

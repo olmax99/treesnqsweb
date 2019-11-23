@@ -19,12 +19,13 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.2/howto/deployment/checklist/
 
+# TODO: Move to k8s Secrets object
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = '42mhp!suat8*4z%4(qd-p#2rft8*tngm8e!_av^r@cqbjno3@4'
 
+# TODO: Move to k8s ConfigMap object
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-
 ALLOWED_HOSTS = ['192.168.39.69', 'localhost', '127.0.0.1']
 
 

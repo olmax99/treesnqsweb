@@ -100,4 +100,7 @@ dmypy.json
 *.parquet
 *.txt
 *.pid
+*secrets.yaml
 djangohelm/charts/*
+djangohelm/values.yaml
+
