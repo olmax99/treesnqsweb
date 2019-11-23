@@ -50,7 +50,7 @@ $ make charts
 
 ```
 
-### Step 1: Initialize local helm repo
+### Step 2: Initialize local helm repo
 
 Initialize the local repo for development:
 ```
@@ -62,7 +62,7 @@ $ make dist
 
 ```
 
-### Step 2: Use local docker images with Minikube
+### Step 3: Use local docker images with Minikube
 
 ```
 $ eval $(minikube docker-env)
@@ -71,7 +71,7 @@ $ docker build -t djangoapp:0.2 ./djangoapp
 
 ```
 
-### Step 3: Prepare helm deployment
+### Step 4: Prepare helm deployment
 
 #### i. Create password secrets
 
@@ -103,34 +103,49 @@ metadata:
 
 Provide values for deploying `djangohelm`. This is an example for a development `values.yaml` file:
 ```
-nameOverride: < Set the Hostname for the postgresql container >
-...
-postgresqlUsername: < leave as postgres for super user >
-postgresqlPassword: < super_secret >
-...
-postgresqlDatabase: < djangoapp >
-postgresqlDataDir: < /path/to/your/project/postgresql/data >
-...
+replicaCount: 1
+image: djangoapp:0.3
+initContainerImage: "alpine:3.6"
+pullPolicy: Never
 service:
-  #   type: ClusterIP
-  #   clusterIP: None
-  port: < leave as default port 5432 >
-...
-persistence:
-  #   enabled: true
-  #   existingClaim:
-    mountPath: < /path/to/your/project/postgresql/ >        <-- NOTE: This must be equal to 'postgresqlDataDir' (excl. data)
-...
-resources:
-  requests:
-  memory: < official recommendation is 1000Mi >
-  cpu: < e.g. 1000m >
+  type: NodePort
+  name: djangoapp
+  externalPort: 8000
+  internalPort: 8000
+externalDatabase:
+  host: localhost
+  user: django_user
+  password: ""
+  database: djangoapp
+  port: 5432
+ingress:
+  enabled: false
+  hosts:
+    - chart-example.local
+  annotations:
+  tls:
+resources: {}
+postgresql:
+  enabled: true
+  nameOverride: postgresql
+  postgresqlUsername: postgres
+  postgresqlPassword: super_secret
+  postgresqlDatabase: djangoapp
+  postgresqlDataDir: /mnt/djangoapp/postgresql/data
+  service:
+    port: 5432
+  persistence:
+    mountPath: /mnt/djangoapp/postgresql
+  resources:
+    requests:
+      memory: 500Mi
+      cpu: 250m
 
 ```
 
 **NOTE:** The host name of the database is `localhost` by default unless the external database option is activated.
 
-### Step 4: Run in development mode
+### Step 5: Run in development mode
 
 ```
 $ skaffold dev

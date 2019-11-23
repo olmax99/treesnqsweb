@@ -7,13 +7,13 @@ all: help
 help:
 	@grep '^.PHONY:.*' Makefile | sed 's/\.PHONY:[ \t]\+\(.*\)[ \t]\+##[ \t]*\(.*\)/\1	\2/' | expand -t20
 
-.PHONY: dev ## Continuous local development in Minikube
-dev:
-	skaffold dev
-
 .PHONY: charts ## w/o make:   helm fetch --untar -d djangohelm/charts/ stable/postgresql
 charts:
 	helm dep up djangohelm/
+
+.PHONY: dev ## Continuous local development in Minikube
+dev: charts
+	skaffold dev
 
 .PHONY: dist ## Update and build packages locally. Ensure that local helm server is up.
 package:
