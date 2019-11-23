@@ -9,7 +9,9 @@ help:
 
 .PHONY: charts ## w/o make:   helm fetch --untar -d djangohelm/charts/ stable/postgresql
 charts:
-	helm dep up djangohelm/
+	cd djangohelm/ && \
+	helm dep update && \
+	cd ..
 
 .PHONY: dev ## Continuous local development in Minikube
 dev: charts
