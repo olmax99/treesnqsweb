@@ -71,16 +71,55 @@ $ docker build -t djangoapp:0.2 ./djangoapp
 
 ```
 
-### Step 3: Adjust the values
+### Step 3: Prepare helm deployment
 
-Provide values for deploying `djangohelm`. As a minimum change the database credentials and resource requirements:
+#### i. Create password secrets
+
+It is best practise to NOT version secrets and manually remove them after the Helm deployment.
+
+In `djangohelm/templates/` add the following `secrets.yaml` file:
 ```
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{ template "djangohelm.fullname" . }}
+    labels:
+      app: "{{ template "djangohelm.fullname" . }}"
+      chart: "{{ template "djangohelm.chart" . }}"
+      release: {{ .Release.Name | quote }}
+      heritage: {{ .Release.Service | quote }}
+  type: Opaque
+  data:
+    {{- if .Values.wordpressPassword }}
+    postgresql-password: {{ default "super_secret" .Values.postgresqlPassword | b64enc | quote }}
+    {{- else }}
+    postgresql-password: {{ randAlphaNum 10 | b64enc | quote }}
+    {{- end }}
+
+```
+
+
+#### ii. Provide default values
+
+Provide values for deploying `djangohelm`. This is an example for a development `values.yaml` file:
+```
+nameOverride: < Set the Hostname for the postgresql container >
 ...
 postgresqlUsername: < leave as postgres for super user >
 postgresqlPassword: < super_secret >
 ...
 postgresqlDatabase: < djangoapp >
 postgresqlDataDir: < /path/to/your/project/postgresql/data >
+...
+service:
+  #   type: ClusterIP
+  #   clusterIP: None
+  port: < leave as default port 5432 >
+...
+persistence:
+  #   enabled: true
+  #   existingClaim:
+    mountPath: < /path/to/your/project/postgresql/ >        <-- NOTE: This must be equal to 'postgresqlDataDir' (excl. data)
 ...
 resources:
   requests:
@@ -114,18 +153,14 @@ postgresql:
   ...
 
 ```
-**HOSTNAME:** Is standard `localhost` unless the option **external database** is set.
-
-**POSTGRES_USER:** Directly defined in `.Values.postgresql.postgresqlUsername`, which is a superuser when named `postgres`.
+  * **HOSTNAME:** Custom Helm template definition as a combination of `{{ printf "%s-%s" .Release.Name .Values.postgresql.nameOverride }}`.
+  * **POSTGRES_USER:** Directly defined in `.Values.postgresql.postgresqlUsername`, which is a superuser when named `postgres`.
                    If name is changed, you also need to change `.Values.postgresql.postgresqlPostgresPassword`.
-                   
-**POSTGRES_PASSWORD:** The default behavior for `_helper.tpl` is to set `true` for `{{- define "postgresql.createSecret" -}}`.
+  * **POSTGRES_PASSWORD:** The default behavior for `_helper.tpl` is to set `true` for `{{- define "postgresql.createSecret" -}}`.
                    This will activate the `secrets.yaml` file, which in turn gets the `postgresql.password` from the `_helpers.tpl`
                    if `.Values.postgresqlPassword` exist or provides a random alphanumeric with 10 chars instead.
-
-**POSTGRESQL_PORT_NUMBER:** Defined in `_helper.tpl`, and coming from `.Values.postgresql.service.port`.
-                            
-**POSTGRES_DB:** Defined in `_helper.tpl`, and coming from `.Values.postgresqlDatabase`.
+  * **POSTGRESQL_PORT_NUMBER:** Defined in `_helper.tpl`, and coming from `.Values.postgresql.service.port`.
+  * **POSTGRES_DB:** Defined in `_helper.tpl`, and coming from `.Values.postgresqlDatabase`.
 
 
 - Which `values.yaml` is being used by `skaffold dev` and `skaffold run`? And how to switch between dev and (multiple) prod?
@@ -174,6 +209,8 @@ being used is always the top one indicated in `index.yaml`.
   * [https://itnext.io/the-definitive-guide-to-running-ec2-spot-instances-as-kubernetes-worker-nodes-68ef2095e767](https://itnext.io/the-definitive-guide-to-running-ec2-spot-instances-as-kubernetes-worker-nodes-68ef2095e767)
   
 - Production level monitoring [https://medium.com/@markgituma/kubernetes-local-to-production-with-django-6-add-prometheus-grafana-monitoring-with-helm-926fafbe1d](https://medium.com/@markgituma/kubernetes-local-to-production-with-django-6-add-prometheus-grafana-monitoring-with-helm-926fafbe1d)
+
+- Use sidecar approach for monitoring [https://kubernetes.io/docs/concepts/cluster-administration/logging/#using-a-sidecar-container-with-the-logging-agent](https://kubernetes.io/docs/concepts/cluster-administration/logging/#using-a-sidecar-container-with-the-logging-agent)
 
 
 ## General Instructions

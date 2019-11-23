@@ -13,4 +13,4 @@ description: A Helm chart of the TreesN'Qs Django web app
 name: djangohelm
 # sources:
 #   - A list of URLs to source code for this project (optional)
-version: 0.0.1
+version: 0.0.2
