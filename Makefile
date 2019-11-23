@@ -23,4 +23,4 @@ package:
 
 .PHONY: index ## Generate the YAML index to serve the available packages.
 dist: package
-	helm repo index .
+	helm repo index ./helmdist
