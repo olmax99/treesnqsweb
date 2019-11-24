@@ -2,15 +2,15 @@ apiVersion: v1
 entries:
   djangohelm:
   - apiVersion: v1
-    created: "2019-11-23T19:01:00.902601444+01:00"
+    created: "2019-11-23T23:52:42.989885163+01:00"
     description: A Helm chart of the TreesN'Qs Django web app
-    digest: 980f13fa1d4734292d92118a63ac2e2c26e8802496a86bbaa0b6114905724644
+    digest: 2310b24bcee4983f9e5208ac6bd9a67b5b0e985d12d5a2b125f53899d4075d47
     name: djangohelm
     urls:
     - djangohelm-0.0.2.tgz
     version: 0.0.2
   - apiVersion: v1
-    created: "2019-11-23T19:01:00.899262463+01:00"
+    created: "2019-11-23T23:52:42.985294583+01:00"
     description: A Helm chart of the TreesN'Qs Django web app
     digest: 7850498fbfb0e11ecc684d7964e09b2cd84b25349a1c93bf8f202c3689921094
     name: djangohelm
@@ -18,7 +18,7 @@ entries:
     - djangohelm-0.0.1.tgz
     version: 0.0.1
   - apiVersion: v1
-    created: "2019-11-23T19:01:00.896839934+01:00"
+    created: "2019-11-23T23:52:42.982408478+01:00"
     description: A Helm chart of TreesN'Qs Django webapp
     digest: bbc10400bc69b6c4426b449b36304730ab1c274e474aeff6651e2d7e306d89f1
     name: djangohelm
@@ -28,7 +28,7 @@ entries:
   postgresql:
   - apiVersion: v1
     appVersion: 11.6.0
-    created: "2019-11-23T19:01:00.90418878+01:00"
+    created: "2019-11-23T23:52:42.99136717+01:00"
     description: Chart for PostgreSQL, an object-relational database management system
       (ORDBMS) with an emphasis on extensibility and on standards-compliance.
     digest: fc390c139acd194fba331d806945c2913e8229df54919532f3f6608d18f25280
@@ -53,4 +53,4 @@ entries:
     urls:
     - postgresql-7.4.0.tgz
     version: 7.4.0
-generated: "2019-11-23T19:01:00.894017934+01:00"
+generated: "2019-11-23T23:52:42.979504618+01:00"

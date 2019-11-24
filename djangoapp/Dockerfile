@@ -6,6 +6,7 @@ COPY ./entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
 COPY ./start.sh /opt/start.sh
+COPY ./manage.py /opt/manage.py
 RUN chmod +x /opt/start.sh
 
 COPY ./gunicorn_conf.py /gunicorn_conf.py

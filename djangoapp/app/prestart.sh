@@ -1,11 +1,14 @@
 #! /usr/bin/env sh
 
-echo "Running inside /opt/app/prestart.sh, you could add migrations to this file, e.g.:"
+echo "Running inside /opt/app/prestart.sh, add migrations here:"
+sleep 10
 
-echo "
-#! /usr/bin/env bash
-# Let the DB start
-sleep 10;
-# Run migrations
-alembic upgrade head
-"
+cd /opt
+# Collect static files
+echo "..collecting static files"
+# python manage.py collectstatic --noinput
+
+# Apply database migrations
+echo "..apply database migrations"
+python manage.py makemigrations
+python manage.py migrate

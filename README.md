@@ -90,7 +90,7 @@ metadata:
       heritage: {{ .Release.Service | quote }}
   type: Opaque
   data:
-    {{- if .Values.wordpressPassword }}
+    {{- if .Values.postgresqlPassword }}
     postgresql-password: {{ default "super_secret" .Values.postgresqlPassword | b64enc | quote }}
     {{- else }}
     postgresql-password: {{ randAlphaNum 10 | b64enc | quote }}
