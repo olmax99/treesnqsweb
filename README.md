@@ -17,7 +17,7 @@ For local development, the following components are required on the local machin
 + Python Version 3.8
 + Docker installed [official Docker docs](https://docs.docker.com/)
 + Minikube [https://kubernetes.io/docs/tasks/tools/install-minikube/](https://kubernetes.io/docs/tasks/tools/install-minikube/)
-+ Helm [https://helm.sh/docs/](https://helm.sh/docs/)
++ Helm v2 [https://helm.sh/docs/](https://helm.sh/docs/)
 + [Optionally] Skaffold [https://skaffold.dev/docs/](https://skaffold.dev/docs/)
 
 ---
