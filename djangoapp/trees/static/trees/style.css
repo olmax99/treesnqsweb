@@ -1,0 +1,11 @@
+li a {
+    color: whitesmoke;
+}
+
+body {
+    background: white url("images/background.jpg") no-repeat;
+    background-size: 100% 100%;
+}
+html {
+    height: 100%
+}

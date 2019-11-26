@@ -1,6 +1,10 @@
-{% if latest_questions_list %}
+{% load static %}
+
+<link rel="stylesheet" type="text/css" href="{% static 'trees/style.css' %}">
+
+{% if last_questions_list %}
     <ul>
-    {% for question in latest_questions_list %}
+    {% for question in last_questions_list %}
         <li><a href="{% url 'trees:detail' question.id %}">{{ question.questions_text }}</a></li>
     {% endfor %}
     </ul>
