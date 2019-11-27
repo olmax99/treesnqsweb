@@ -15,9 +15,11 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from users import views as users_views
 
 # TODO: production - replace path 'admin/' with env from secrets
 urlpatterns = [
-    path('trees/', include('trees.urls')),
+    path('', include('blog.urls')),
     path('admin/', admin.site.urls),
+    path('register/', users_views.register, name='register'),
 ]

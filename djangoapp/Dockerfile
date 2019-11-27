@@ -12,7 +12,8 @@ RUN chmod +x /opt/start.sh
 COPY ./gunicorn_conf.py /gunicorn_conf.py
 
 COPY ./app /opt/app
-COPY ./trees /opt/trees
+COPY ./blog /opt/blog
+COPY ./users /opt/users
 WORKDIR /opt/app/
 
 COPY requirements.txt /opt/app/requirements.txt

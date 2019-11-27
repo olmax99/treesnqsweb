@@ -25,7 +25,7 @@ For local development, the following components are required on the local machin
 ## Quickstart Development
 
 Use PYTHONPATH for manual Django manage.py tasks, e.g. reach the built-in Django server via:
-`PYTHONPATH=$(pwd) python -m pipenv run python manage.py runserver 8081`.
+`PYTHONPATH=$(pwd) python -m pipenv run python manage.py  runserver 8081`.
 
 ### Packages
 

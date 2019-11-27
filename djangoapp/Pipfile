@@ -10,6 +10,7 @@ gunicorn = "*"
 django = "==2.2.6"
 psycopg2-binary = "*"
 whitenoise = "*"
+django-crispy-forms = "*"
 
 [requires]
 python_version = "3.8"
