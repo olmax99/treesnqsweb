@@ -18,7 +18,7 @@ For local development, the following components are required on the local machin
 + Docker installed [official Docker docs](https://docs.docker.com/)
 + Minikube [https://kubernetes.io/docs/tasks/tools/install-minikube/](https://kubernetes.io/docs/tasks/tools/install-minikube/)
 + Helm v2 [https://helm.sh/docs/](https://helm.sh/docs/)
-+ [Optionally] Skaffold [https://skaffold.dev/docs/](https://skaffold.dev/docs/)
++ [Optionally] Skaffold [https://skaffold.dev/docs/](https://skaffold.dev/docs/) - NOTE: skaffold only supports helm v2
 
 ---
 
@@ -54,7 +54,10 @@ $ make charts
 
 Initialize the local repo for development:
 ```
-$ minikube start
+$ minikube start --vm-driver kvm2 --memory 4096 --cpus 2
+
+# Install Tiller (Helm v2)
+$ helm init --history-max 200
 
 $ helm serve
 
@@ -62,8 +65,7 @@ $ make dist
 
 ```
 
-### Step 3: Use local docker images with Minikube
-
+In case docker image needs to be present inside minikube dockerd:
 ```
 $ eval $(minikube docker-env)
 
@@ -148,7 +150,7 @@ postgresql:
 ### Step 5: Run in development mode
 
 ```
-$ skaffold dev
+$ make dev
 
 ```
 
@@ -227,10 +229,50 @@ being used is always the top one indicated in `index.yaml`.
 
 - Use sidecar approach for monitoring [https://kubernetes.io/docs/concepts/cluster-administration/logging/#using-a-sidecar-container-with-the-logging-agent](https://kubernetes.io/docs/concepts/cluster-administration/logging/#using-a-sidecar-container-with-the-logging-agent)
 
+- Build a CI/CD pipeline for facilitating automated tests - ckeck with skaffold run .. [https://docs.djangoproject.com/en/2.2/topics/testing/tools/#django.test.LiveServerTestCase](https://docs.djangoproject.com/en/2.2/topics/testing/tools/#django.test.LiveServerTestCase)
+
+- Serve staticfiles separately in production [https://testdriven.io/blog/dockerizing-django-with-postgres-gunicorn-and-nginx/](https://testdriven.io/blog/dockerizing-django-with-postgres-gunicorn-and-nginx/)
+
+- User authentication email + google [https://medium.com/trabe/oauth-authentication-in-django-with-social-auth-c67a002479c1](https://medium.com/trabe/oauth-authentication-in-django-with-social-auth-c67a002479c1)
+
 
 ## General Instructions
 
-### Djangohelm Parameters
+### i. Static Files
+
+The static files are being served using [http://whitenoise.evans.io/en/stable/](http://whitenoise.evans.io/en/stable/) middleware for simplified
+in-docker wsgi static file serving.
+
+```
+MIDDLEWARE = [
+    'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
+
+STATIC_URL = '/opt/static/'
+STATIC_ROOT = '/opt/static/'
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+```
+
+This will automatically create a folder `/opt/static`:
+```
+/opt/static/
+├── admin           <-- Default static files from /usr/local/lib/python3.8/site-packages/django/contrib/admin/static
+│   ├── css
+│   ├── fonts
+│   ├── img
+│   └── js
+├── staticfiles.json
+└── trees                       <-- created from custom Django app incl. directory /djangoapp/<custom_app>/static/<custom_app>
+    ├── images
+    ├── style.279196452539.css
+    └── style.css
+
+```
+
+
+
+### ii. Djangohelm Parameters
 
 The following table lists the configurable parameters of the Djangohelm main chart and subcharts
 configurable from main chart `values.yaml`.

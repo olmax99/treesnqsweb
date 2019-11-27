@@ -16,6 +16,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 
+# TODO: production - replace path 'admin/' with env from secrets
 urlpatterns = [
     path('trees/', include('trees.urls')),
     path('admin/', admin.site.urls),
