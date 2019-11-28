@@ -18,7 +18,7 @@ For local development, the following components are required on the local machin
 + Docker installed [official Docker docs](https://docs.docker.com/)
 + Minikube [https://kubernetes.io/docs/tasks/tools/install-minikube/](https://kubernetes.io/docs/tasks/tools/install-minikube/)
 + Helm v2 [https://helm.sh/docs/](https://helm.sh/docs/)
-+ [Optionally] Skaffold [https://skaffold.dev/docs/](https://skaffold.dev/docs/) - NOTE: skaffold only supports helm v2
++ [Optionally] Skaffold [https://skaffold.dev/docs/](https://skaffold.dev/docs/) - NOTE: skaffold currently only supports helm v2
 
 ---
 
@@ -138,6 +138,7 @@ postgresql:
     port: 5432
   persistence:
     mountPath: /mnt/djangoapp/postgresql
+    size: 8Gi
   resources:
     requests:
       memory: 500Mi
@@ -154,10 +155,30 @@ $ make dev
 
 ```
 
+**NOTE:** Performing migrations on newly created models during `skaffold dev` might fail. Always pause `skaffold dev`
+during new model creation.
+
 ## FAQ
 
 
 ### Helm/Skaffold
+
+- How to access the postgres Pod for querying the database? 
+- What is the directory the actual data is written to? 
+- How to free up space from released persistent volumes? How to free up space from minikube `dev/vda1`?
+
+```
+$ kubectl run djangohelm-postgresql-client --rm --tty -i --restart='Never' --namespace default --image docker.io/bitnami/postgresql:11.6.0-debian-9-r0 --env="PGPASSWORD=super_secret" --command -- psql --host djangohelm-postgresql -U postgres -d postgres -p 5432
+
+$ kubectl get pv
+$ kubectl describe pv <pv_name>
+
+# ----- More Info on Minikube Image--------
+$ sudo virsh list
+$ sudo virsh domblklist minikube
+$ sudo qemu-img info <image_name>
+
+```
 
 - How to configure the connection credentials and pass them on from main Chart?
 
