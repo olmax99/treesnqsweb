@@ -6,10 +6,10 @@ This is the web app project for TreesN'Qs. A simple Django site hosted via Kuber
 
 **Project Design**
 
-...  
-  
-  
-  ## Prerequisites
+... 
+
+
+## Prerequisites
 
 For local development, the following components are required on the local machine:
 
