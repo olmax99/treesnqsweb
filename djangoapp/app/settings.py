@@ -21,7 +21,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # TODO: Move to k8s Secrets object
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '42mhp!suat8*4z%4(qd-p#2rft8*tngm8e!_av^r@cqbjno3@4'
+SECRET_KEY = os.getenv('DJANGOAPP_FERNET_KEY', '42mhp!suat8*4z%4(qd-p#2rft8*tngm8e!_av^r@cqbjno3@4')
 
 # TODO: Move to k8s ConfigMap object
 # SECURITY WARNING: don't run with debug turned on in production!
@@ -117,7 +117,7 @@ LANGUAGE_CODE = 'en-us'
 
 # TODO: Get timezone from ConfigMap
 # TIME_ZONE = 'UTC'
-TIME_ZONE = 'Europe/Zurich'
+TIME_ZONE = os.getenv('DJANGOAPP_CUSTOM_TIME_ZONE', 'UTC')
 
 USE_I18N = True
 
@@ -142,11 +142,20 @@ CRISPY_TEMPLATE_PACK = 'bootstrap4'
 LOGIN_REDIRECT_URL = 'blog-home'
 LOGIN_URL = 'login'
 
+ADMIN_DEFAULT_URL = f"{os.getenv('DJANGOAPP_ADMIN_DEFAULT_URL', 'admin')}/"
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = os.getenv('DJANGOAPP_EMAIL_USER', 'unknown')
+EMAIL_HOST_PASSWORD = os.getenv('DJANGOAPP_EMAIL_PASSWORD', 'unknown')
+
 # Media files (User generated)
 # aws settings
-# AWS_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY_ID')
-# AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY')
-# AWS_STORAGE_BUCKET_NAME = os.getenv('AWS_STORAGE_BUCKET_NAME')
+AWS_ACCESS_KEY_ID = os.getenv('DJANGOAPP_AWS_ACCESS_KEY_ID', 'default')
+AWS_SECRET_ACCESS_KEY = os.getenv('DJANGOAPP_AWS_SECRET_ACCESS_KEY', 'default')
+AWS_STORAGE_BUCKET_NAME = os.getenv('DJANGOAPP_AWS_STORAGE_BUCKET_NAME', 'default')
 # AWS_DEFAULT_ACL = None
 # AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com'
 # AWS_S3_OBJECT_PARAMETERS = {'CacheControl': 'max-age=86400'}
@@ -161,3 +170,4 @@ LOGIN_URL = 'login'
 # s3 private media settings
 # PRIVATE_MEDIA_LOCATION = 'private'
 # PRIVATE_FILE_STORAGE = 'app.storage_backends.PrivateMediaStorage'
+

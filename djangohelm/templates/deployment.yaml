@@ -39,6 +39,37 @@ spec:
           image: {{ .Values.image }}
           imagePullPolicy: {{ .Values.pullPolicy }}
           env:
+          - name: DJANGOAPP_FERNET_KEY
+            valueFrom:
+              secretKeyRef:
+                name: {{ template "djangohelm.fullname" . }}
+                key: djangoapp-fernetkey
+          - name: DJANGOAPP_CUSTOM_TIME_ZONE
+            value: {{ .Values.djangoappCustomTimezone }}
+          - name: DJANGOAPP_ADMIN_DEFAULT_URL
+            valueFrom:
+              secretKeyRef:
+                name: {{ template "djangohelm.fullname" . }}
+                key: djangoapp-adminurl
+          - name: DJANGOAPP_EMAIL_USER
+            value: {{ .Values.djangoappEmailHostUser }}
+          - name: DJANGOAPP_EMAIL_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: {{ template "djangohelm.fullname" . }}
+                key: djangoapp-emailpassword
+          - name: DJANGOAPP_AWS_ACCESS_KEY_ID
+            valueFrom:
+              secretKeyRef:
+                name: {{ template "djangohelm.fullname" . }}
+                key: djangoapp-awsid
+          - name: DJANGOAPP_AWS_SECRET_ACCESS_KEY
+            valueFrom:
+              secretKeyRef:
+                name: {{ template "djangohelm.fullname" . }}
+                key: djangoapp-awskey
+          - name: DJANGOAPP_AWS_STORAGE_BUCKET_NAME
+            value: {{ .Values.djangoappBucket }}
           - name: POSTGRES_USER
           {{- if .Values.postgresql.enabled }}
             value: {{ .Values.postgresql.postgresqlUsername }}

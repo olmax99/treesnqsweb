@@ -73,7 +73,7 @@ $ docker build -t djangoapp:0.2 ./djangoapp
 
 ```
 
-### Step 4: Prepare helm deployment
+### Step 3: Prepare helm deployment
 
 #### i. Create password secrets
 
@@ -152,6 +152,8 @@ postgresql:
 
 ```
 $ make dev
+
+# Test a 
 
 ```
 
