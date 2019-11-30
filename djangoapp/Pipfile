@@ -12,6 +12,8 @@ psycopg2-binary = "*"
 whitenoise = "*"
 django-crispy-forms = "*"
 pillow = "*"
+boto3 = "*"
+django-storages = "*"
 
 [requires]
 python_version = "3.8"

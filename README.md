@@ -43,6 +43,11 @@ treesnqsweb     https://raw.githubusercontent.com/olmax99/treesnqsweb/master/hel
 
 ```
 
+### S3 Media Files
+
+In order to use S3 Storage for Media files create a new Dev User and Group in the AWS console.
+Download the programmatic access credentials
+
 ### Step 1: Fetch subcharts
 
 ```
@@ -103,12 +108,23 @@ metadata:
 
 #### ii. Provide default values
 
+Create an gmail account and activate [https://support.google.com/accounts/answer/185833?hl=en](https://support.google.com/accounts/answer/185833?hl=en). Use
+the password in `djangoappEmailHostPassword`.
+
 Provide values for deploying `djangohelm`. This is an example for a development `values.yaml` file:
 ```
 replicaCount: 1
 image: djangoapp:0.3
 initContainerImage: "alpine:3.6"
 pullPolicy: Never
+djangoappFernetKey: "fsifwieuhwof89c7s9_%adsasd*mkdms-89ijadasdsduz25%z"
+djangoappCustomTimezone: "Europe/Zurich"
+djangoappAdminDefaultUrl: admin
+djangoappEmailHostUser: example@gmail.com       <-- Replace with the Gmail account previously created
+djangoappEmailHostPassword: "____________"
+djangoappAwsId: default                         <-- Replace with AWS developer credentials
+djangoappAwsKey: default
+djangoappBucket: unknown
 service:
   type: NodePort
   name: djangoapp
@@ -148,12 +164,14 @@ postgresql:
 
 **NOTE:** The host name of the database is `localhost` by default unless the external database option is activated.
 
+#### iii. Create Python Requirements
+
+In `treesnqsweb/djangoapp` run: `pipenv lock -r > requirements.txt`
+
 ### Step 5: Run in development mode
 
 ```
 $ make dev
-
-# Test a 
 
 ```
 

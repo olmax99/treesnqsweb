@@ -1,11 +1,17 @@
 local := http:\/\/127.0.0.1:8879\/charts
 remote := https:\/\/raw.githubusercontent.com\/olmax99\/treesnqsweb\/master\/helmdist
 
+AWS_REGION := eu-central-1
+PROJECT_NAME := treesnqsweb-dev
+
 all: help
 
 .PHONY: help ## Help
 help:
 	@grep '^.PHONY:.*' Makefile | sed 's/\.PHONY:[ \t]\+\(.*\)[ \t]\+##[ \t]*\(.*\)/\1	\2/' | expand -t20
+
+templates:
+	aws s3 cp --recursive media s3://${PROJECT_NAME}-djangoapp-mediastore-${AWS_REGION}
 
 .PHONY: charts ## w/o make:   helm fetch --untar -d djangohelm/charts/ stable/postgresql
 charts:
@@ -15,6 +21,9 @@ charts:
 
 .PHONY: dev ## Continuous local development in Minikube
 dev: charts
+	aws cloudformation --region ${AWS_REGION} create-stack --stack-name ${PROJECT_NAME} \
+	--template-body file://cloudformation/development/cloudformation.dev.mediastore.yml \
+	--parameters ParameterKey="ProjectNamePrefix",ParameterValue="${PROJECT_NAME}"
 	skaffold dev
 
 .PHONY: dist ## Update and build packages locally. Ensure that local helm server is up.

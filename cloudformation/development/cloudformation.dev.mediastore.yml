@@ -1,0 +1,48 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Parameters:
+  ProjectNamePrefix:
+    Type: String
+
+  MediaStoreName:
+    Description: Name of Media Store as source for the DjangoApp images and large files
+    Type: String
+    AllowedPattern: "^[a-zA-Z0-9]+[a-zA-Z0-9-]+[a-zA-Z0-9]+$"
+    Default: djangoapp-mediastore
+
+# Resources section defines metadata for the Data Catalog
+Resources:
+  MediaStore:
+    Type: AWS::S3::Bucket
+    Properties:
+      AccessControl: Private
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+        - ServerSideEncryptionByDefault:
+            SSEAlgorithm: AES256
+      BucketName: !Sub ${ProjectNamePrefix}-${MediaStoreName}-${AWS::Region}
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: True
+        BlockPublicPolicy: True
+        IgnorePublicAcls: True
+        RestrictPublicBuckets: True
+      CorsConfiguration:
+        CorsRules:
+          - AllowedHeaders:
+              - "*"
+            AllowedMethods:
+              - "GET"
+              - "POST"
+              - "PUT"
+            # In production, restrict AllowedOrigins to your domain
+            AllowedOrigins:
+              - "*"
+#            ExposedHeaders:
+#              - String
+#            Id: String
+#            MaxAge: Integer
+
+      # advanced list features
+      # InventoryConfigurations:
+      #  - InventoryConfiguration
+      # LifecycleConfiguration:
+      #   LifecycleConfiguration
