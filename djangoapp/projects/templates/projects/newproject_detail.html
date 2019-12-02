@@ -1,16 +1,16 @@
-{% extends "blog/base.html" %}
+{% extends "projects/base.html" %}
 {% block content %}
         <article class="media content-section">
           <!-- PROJECT IMAGE HERE -->
-          <!-- <img class="rounded-circle article-image" src=/{/{ post.author.profile.image.url /}/}> -->
+          <!-- <img class="rounded-circle article-image" src=/{/{ newproject.publisher.profile.image.url /}/}> -->
           <div class="media-body">
             <div class="article-metadata">
-              <a class="mr-2" href="#">{{ object.author }}</a>
+              <a class="mr-2" href="#">{{ object.publisher }}</a>
               <small class="text-muted">{{ object.date_posted|date:"F d, Y" }}</small>
             </div>
             <h2 class="article-title">{{ object.title }}</h2>
-            <p class="article-content">{{ object.post_text }}</p>
-            <p class="article-content">{{ object.post_detail }}</p>
+            <p class="article-content">{{ object.newproject_text }}</p>
+            <p class="article-content">{{ object.newproject_detail }}</p>
           </div>
         </article>
 {% endblock content %}

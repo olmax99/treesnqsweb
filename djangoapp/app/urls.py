@@ -25,7 +25,7 @@ from users import views as users_views
 # TODO: production - replace path 'admin/' with env from secrets
 # Define admin default url in djangohelm/values.yaml
 urlpatterns = [
-    path('', include('blog.urls')),
+    path('', include('projects.urls')),
     path(settings.ADMIN_DEFAULT_URL, admin.site.urls),
     path('register/', users_views.register, name='register'),
     path('login/', auth_views.LoginView.as_view(template_name='users/login.html'), name='login'),

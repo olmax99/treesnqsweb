@@ -33,7 +33,7 @@ ALLOWED_HOSTS = ['*']
 # Application definition
 INSTALLED_APPS = [
     'users.apps.UsersConfig',
-    'blog.apps.BlogConfig',
+    'projects.apps.ProjectsConfig',
     'crispy_forms',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -132,15 +132,14 @@ USE_TZ = True
 
 STATIC_URL = '/opt/static/'
 STATIC_ROOT = '/opt/static/'
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 MEDIA_URL = '/opt/media/'
 MEDIA_ROOT = '/opt/media/'
 
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
-
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
-LOGIN_REDIRECT_URL = 'blog-home'
+LOGIN_REDIRECT_URL = 'treesnqs-home'
 LOGIN_URL = 'login'
 
 ADMIN_DEFAULT_URL = f"{os.getenv('DJANGOAPP_ADMIN_DEFAULT_URL', 'admin')}/"
@@ -152,27 +151,16 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = os.getenv('DJANGOAPP_EMAIL_USER', 'unknown')
 EMAIL_HOST_PASSWORD = os.getenv('DJANGOAPP_EMAIL_PASSWORD', 'unknown')
 
-# Media files (User generated)
-# aws settings
+# AWS settings media files (user generated)
 AWS_ACCESS_KEY_ID = os.getenv('DJANGOAPP_AWS_ACCESS_KEY_ID', 'default')
 AWS_SECRET_ACCESS_KEY = os.getenv('DJANGOAPP_AWS_SECRET_ACCESS_KEY', 'default')
 AWS_STORAGE_BUCKET_NAME = os.getenv('DJANGOAPP_AWS_STORAGE_BUCKET_NAME', 'default')
 AWS_S3_FILE_OVERWRITE = False
 AWS_DEFAULT_ACL = None
 AWS_S3_REGION_NAME = 'eu-central-1'
-AWS_S3_SIGNATURE_VERSION = 's3v4'
 DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+AWS_S3_SIGNATURE_VERSION = 's3v4'
 # AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com'
-# AWS_S3_OBJECT_PARAMETERS = {'CacheControl': 'max-age=86400'}
-# s3 static settings
-# STATIC_LOCATION = 'static'
-# STATIC_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/{STATIC_LOCATION}/'
-# STATICFILES_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
-# s3 public media settings
 # PUBLIC_MEDIA_LOCATION = 'media'
 # MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/{PUBLIC_MEDIA_LOCATION}/'
-# DEFAULT_FILE_STORAGE = 'app.storage_backends.PublicMediaStorage'
-# s3 private media settings
-# PRIVATE_MEDIA_LOCATION = 'private'
-# PRIVATE_FILE_STORAGE = 'app.storage_backends.PrivateMediaStorage'
-
+# AWS_S3_OBJECT_PARAMETERS = {'CacheControl': 'max-age=86400'}

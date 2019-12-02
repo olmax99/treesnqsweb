@@ -1,0 +1,17 @@
+{% extends "projects/base.html" %}
+{% block content %}
+    {% for proj in newproject %}
+        <article class="media content-section">
+          <!-- PROJECT IMAGE HERE -->
+          <!-- <img class="rounded-circle article-image" src=/{/{ post.publisher.profile.image.url /}/}> -->
+          <div class="media-body">
+            <div class="article-metadata">
+              <a class="mr-2" href="#">{{ proj.publisher }}</a>
+              <small class="text-muted">{{ proj.date_posted|date:"F d, Y" }}</small>
+            </div>
+            <h2><a class="article-title" href="{% url 'newproject-detail' proj.id %}">{{ proj.title }}</a></h2>
+            <p class="article-content">{{ proj.newproject_text }}</p>
+          </div>
+        </article>
+    {% endfor %}
+{% endblock content %}

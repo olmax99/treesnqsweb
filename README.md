@@ -46,7 +46,7 @@ treesnqsweb     https://raw.githubusercontent.com/olmax99/treesnqsweb/master/hel
 ### S3 Media Files
 
 In order to use S3 Storage for Media files create a new Dev User and Group in the AWS console.
-Download the programmatic access credentials
+Download the programmatic access credentials and insert them into `djangohelm/values.yml`.
 
 ### Step 1: Fetch subcharts
 
@@ -121,7 +121,7 @@ djangoappFernetKey: "fsifwieuhwof89c7s9_%adsasd*mkdms-89ijadasdsduz25%z"
 djangoappCustomTimezone: "Europe/Zurich"
 djangoappAdminDefaultUrl: admin
 djangoappEmailHostUser: example@gmail.com       <-- Replace with the Gmail account previously created
-djangoappEmailHostPassword: "____________"
+djangoappEmailHostPassword: "super_secret"
 djangoappAwsId: default                         <-- Replace with AWS developer credentials
 djangoappAwsKey: default
 djangoappBucket: unknown
@@ -149,7 +149,7 @@ postgresql:
   postgresqlUsername: postgres
   postgresqlPassword: super_secret
   postgresqlDatabase: djangoapp
-  postgresqlDataDir: /mnt/djangoapp/postgresql/data
+  postgresqlDataDir: /mnt/djangoapp/postgresql/data     <-- NOTE: Needs to match persistence.mountPath
   service:
     port: 5432
   persistence:
@@ -157,7 +157,7 @@ postgresql:
     size: 8Gi
   resources:
     requests:
-      memory: 500Mi
+      memory: 500Mi                 <-- In production set (memory,cpu) to min(1000Mi,1000Mi) 
       cpu: 250m
 
 ```
@@ -173,7 +173,15 @@ In `treesnqsweb/djangoapp` run: `pipenv lock -r > requirements.txt`
 ```
 $ make dev
 
+$ make templates
+
+# Get Minikube IP and the Djangoapp NodePort
+$ minikube ip
+$ kubectl get all
+
 ```
+
+Open the Djangoapp via browser at `https://<minikube ip>:<Node Port>`
 
 **NOTE:** Performing migrations on newly created models during `skaffold dev` might fail. Always pause `skaffold dev`
 during new model creation.
@@ -183,13 +191,16 @@ during new model creation.
 
 ### Helm/Skaffold
 
-- How to access the postgres Pod for querying the database? 
-- What is the directory the actual data is written to? 
-- How to free up space from released persistent volumes? How to free up space from minikube `dev/vda1`?
+- How to access the postgres Pod for querying the database?
 
 ```
 $ kubectl run djangohelm-postgresql-client --rm --tty -i --restart='Never' --namespace default --image docker.io/bitnami/postgresql:11.6.0-debian-9-r0 --env="PGPASSWORD=super_secret" --command -- psql --host djangohelm-postgresql -U postgres -d postgres -p 5432
 
+```
+
+- What is the directory the actual data is written to?
+
+```
 $ kubectl get pv
 $ kubectl describe pv <pv_name>
 
@@ -199,6 +210,11 @@ $ sudo virsh domblklist minikube
 $ sudo qemu-img info <image_name>
 
 ```
+
+- How to free up space from released persistent volumes? How to free up space from minikube `dev/vda1`?
+
+Currently, the only option seems to stop, delete, and restart Minikube. All data will be lost. 
+<-- Try: Delete PV manually, and restart djangohelm 
 
 - How to configure the connection credentials and pass them on from main Chart?
 
@@ -272,10 +288,11 @@ being used is always the top one indicated in `index.yaml`.
 
 - Build a CI/CD pipeline for facilitating automated tests - ckeck with skaffold run .. [https://docs.djangoproject.com/en/2.2/topics/testing/tools/#django.test.LiveServerTestCase](https://docs.djangoproject.com/en/2.2/topics/testing/tools/#django.test.LiveServerTestCase)
 
-- Serve staticfiles separately in production [https://testdriven.io/blog/dockerizing-django-with-postgres-gunicorn-and-nginx/](https://testdriven.io/blog/dockerizing-django-with-postgres-gunicorn-and-nginx/)
+- User authentication with google [https://medium.com/trabe/oauth-authentication-in-django-with-social-auth-c67a002479c1](https://medium.com/trabe/oauth-authentication-in-django-with-social-auth-c67a002479c1)
 
-- User authentication email + google [https://medium.com/trabe/oauth-authentication-in-django-with-social-auth-c67a002479c1](https://medium.com/trabe/oauth-authentication-in-django-with-social-auth-c67a002479c1)
+- Deploy a Lambda function that creates thumbnails from uploaded user profile pictures. (OR simply remove the upload functionality in the early version!!!)
 
+- Use EBS volume for PersistentVolumes, otherwise data will be lost if the cluster is being shut down
 
 ## General Instructions
 
