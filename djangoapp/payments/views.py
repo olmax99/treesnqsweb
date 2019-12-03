@@ -1,3 +1,12 @@
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 
-# Create your views here.
+from payments.models import Item
+
+
+@login_required
+def list_items(request):
+    context = {
+        'items': Item.objects.all()
+    }
+    return render(request, "payments/../projects/templates/projects/home-page.html", context)
