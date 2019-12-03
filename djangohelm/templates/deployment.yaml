@@ -70,6 +70,18 @@ spec:
                 key: djangoapp-awskey
           - name: DJANGOAPP_AWS_STORAGE_BUCKET_NAME
             value: {{ .Values.djangoappBucket }}
+          - name: DJANGOAPP_STRIPE_TEST_PUBLIC_KEY
+            value: {{ .Values.djangoappStripeTestPub }}
+          - name: DJANGOAPP_STRIPE_TEST_SECRET_KEY
+            valueFrom:
+              secretKeyRef:
+                name: {{ template "djangohelm.fullname" . }}
+                key: djangoapp-stripetest
+          - name: DJANGOAPP_DJSTRIPE_WEBHOOK_SECRET
+            valueFrom:
+              secretKeyRef:
+                name: {{ template "djangohelm.fullname" . }}
+                key: djangoapp-stripehook
           - name: POSTGRES_USER
           {{- if .Values.postgresql.enabled }}
             value: {{ .Values.postgresql.postgresqlUsername }}

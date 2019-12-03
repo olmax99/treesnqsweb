@@ -19,7 +19,6 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.2/howto/deployment/checklist/
 
-# TODO: Move to k8s Secrets object
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.getenv('DJANGOAPP_FERNET_KEY', '42mhp!suat8*4z%4(qd-p#2rft8*tngm8e!_av^r@cqbjno3@4')
 
@@ -42,6 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'storages',
+    'djstripe',
 ]
 
 MIDDLEWARE = [
@@ -164,3 +164,16 @@ AWS_S3_SIGNATURE_VERSION = 's3v4'
 # PUBLIC_MEDIA_LOCATION = 'media'
 # MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/{PUBLIC_MEDIA_LOCATION}/'
 # AWS_S3_OBJECT_PARAMETERS = {'CacheControl': 'max-age=86400'}
+
+# Stripe Payments
+# https://dashboard.stripe.com/test/dashboard
+
+# Publishable Key pk_test_5fmmEWu1gFayFdYFmctskmcX006YNB5lQl
+STRIPE_LIVE_PUBLIC_KEY = os.getenv("DJANGOAPP_STRIPE_LIVE_PUBLIC_KEY", "default")
+STRIPE_LIVE_SECRET_KEY = os.getenv("DJANGOAPP_STRIPE_LIVE_SECRET_KEY", "default")
+STRIPE_TEST_PUBLIC_KEY = os.getenv("DJANGOAPP_STRIPE_TEST_PUBLIC_KEY", "default")
+STRIPE_TEST_SECRET_KEY = os.getenv("DJANGOAPP_STRIPE_TEST_SECRET_KEY", "default")
+DJSTRIPE_WEBHOOK_SECRET = os.getenv("DJANGOAPP_DJSTRIPE_WEBHOOK_SECRET", "default")
+# TODO: Move to k8s ConfigMap object
+# Change to True in production
+STRIPE_LIVE_MODE = False

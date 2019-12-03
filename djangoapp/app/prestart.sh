@@ -11,6 +11,9 @@ echo "..apply database migrations"
 python manage.py makemigrations
 python manage.py migrate
 
+# Apply Stripe payment migration
+python manage.py djstripe_init_customers
+
 # Collect static files
 echo "..collecting static files"
 python manage.py collectstatic --noinput
