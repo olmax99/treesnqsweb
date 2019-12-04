@@ -143,55 +143,64 @@
   </div>
   <!--/.Carousel Wrapper-->
 
-  <!--Section: Projects v.3-->
-  <section class="text-center mb-4">
-    {% for proj in newproject %}
-      <!--Grid row-->
-      <div class="row wow fadeIn">
+  <!--Main layout-->
+  <main>
+    <div class="container">
+      <!--Section: Projects v.3-->
+      <section class="text-center mb-4">
+        <hr>
+        <h2>Current Projects</h2>
+        {% for proj in newproject %}
+          <!--Grid row-->
+          <div class="row wow fadeIn col-md-8">
 
-          <!--Grid column-->
-          <column class="mx-2 mb-4 pb-3">
+              <!--Grid column-->
+              <column class="mx-2 mb-4 pb-3">
 
-            <!--Card-->
-            <div class="card col-md6" style="visibility: visible">
+                <!--Card-->
+                <div class="card col-md6" style="visibility: visible">
 
-              <!--Card image-->
-{#              <div class="view overlay">#}
-{#                <img src="https://mdbootstrap.com/img/Photos/Horizontal/E-commerce/Vertical/12.jpg" class="card-img-top"#}
-{#                  alt="">#}
-{#                <a>#}
-{#                  <div class="mask rgba-white-slight"></div>#}
-{#                </a>#}
-{#              </div>#}
-              <!--Card image-->
+                  <!--Card image-->
+    {#              <div class="view overlay">#}
+    {#                <img src="https://mdbootstrap.com/img/Photos/Horizontal/E-commerce/Vertical/12.jpg" class="card-img-top"#}
+    {#                  alt="">#}
+    {#                <a>#}
+    {#                  <div class="mask rgba-white-slight"></div>#}
+    {#                </a>#}
+    {#              </div>#}
+                  <!--Card image-->
 
-              <!--Card content-->
-              <div class="card-body text-left">
-                <!--Category & Title-->
-                <a href="" class="grey-text">
-                  <h5 class="card-title">{{ proj.newproject_text }}</h5>
-                </a>
-                <h2><a class="article-title" href="{% url 'newproject-detail' proj.id %}">{{ proj.title }}</a></h2>
-                <h6 class="font-weight-bold grey-text">
-                  {{ proj.date_posted|date:"F d, Y" }}
-                </h6>
+                  <!--Card content-->
+                  <div class="card-body text-left">
+                    <!--Category & Title-->
+                    <a href="" class="grey-text">
+                      <h5 class="card-title">{{ proj.newproject_text }}</h5>
+                    </a>
+                    <h2><a class="article-title" href="{% url 'newproject-detail' proj.id %}">{{ proj.title }}</a></h2>
+                    <h6 class="font-weight-bold grey-text">
+                      {{ proj.date_posted|date:"F d, Y" }}
+                    </h6>
 
-              </div>
-              <!--Card content-->
+                  </div>
+                  <!--Card content-->
+
+                </div>
+                <!--Card-->
+
+              </column>
+              <!--Grid column-->
 
             </div>
-            <!--Card-->
+          <!--Grid row-->
+        {% endfor %}
 
-          </column>
-          <!--Grid column-->
+      <!--/.Projects Overview-->
 
-        </div>
-      <!--Grid row-->
-    {% endfor %}
+      </section>
+      <!--Section: Products v.3-->
 
-  <!--/.Projects Overview-->
-
-  </section>
-  <!--Section: Products v.3-->
+    </div>
+  </main>
+  <!--Main layout-->
 
 {% endblock content %}
