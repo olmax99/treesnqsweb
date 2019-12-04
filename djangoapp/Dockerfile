@@ -15,6 +15,7 @@ COPY ./app /opt/app
 COPY ./projects /opt/projects
 COPY ./users /opt/users
 COPY ./payments /opt/payments
+COPY static /opt/static
 WORKDIR /opt/app/
 
 COPY requirements.txt /opt/app/requirements.txt

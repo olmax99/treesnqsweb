@@ -9,4 +9,4 @@ def list_items(request):
     context = {
         'items': Item.objects.all()
     }
-    return render(request, "payments/../projects/templates/projects/home-page.html", context)
+    return render(request, "payments/checkout-page.html", context)
