@@ -14,10 +14,13 @@ from projects.models import NewProject
 
 
 class OrderItem(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    ordered = models.BooleanField(default=False)
     item = models.ForeignKey(NewProject, on_delete=models.CASCADE)
+    quantity = models.IntegerField(default=1)
 
     def __str__(self):
-        return self.title
+        return f"{self.quantity} of {self.item.title}"
 
 
 class Order(models.Model):
