@@ -1,18 +1,20 @@
 from django.contrib.auth.models import User
 from django.db import models
 
+from projects.models import NewProject
 
-class Item(models.Model):
-    title = models.CharField(max_length=52)
-    # TODO: Depending on user profile, "Default", "Member", "NonProfit"
-    price = models.FloatField()
 
-    def __str__(self):
-        return self.title
+# class Item(models.Model):
+#     title = models.CharField(max_length=52)
+#     # TODO: Depending on user profile, "Default", "Member", "NonProfit"
+#     price = models.FloatField()
+#
+#     def __str__(self):
+#         return self.title
 
 
 class OrderItem(models.Model):
-    item = models.ForeignKey(Item, on_delete=models.CASCADE)
+    item = models.ForeignKey(NewProject, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.title

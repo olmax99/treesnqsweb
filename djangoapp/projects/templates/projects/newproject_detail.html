@@ -35,15 +35,19 @@
             </div>
 
             <p class="lead">
+              {% if newproject.discount_price %}
               <span class="mr-1">
-                <del>$200</del>
+                <del>CHF {{ newproject.discount_price }}</del>
               </span>
-              <span>$100</span>
+              <span>CHF {{ newproject.price }}</span>
+              {% else %}
+              <span>CHF {{ newproject.price }}</span>
+              {% endif %}
             </p>
 
-            <p class="lead font-weight-bold">{{ object.title }}</p>
+            <p class="lead font-weight-bold">{{ newproject.title }}</p>
 
-            <p>{{ object.newproject_detail }}</p>
+            <p>{{ newproject.newproject_detail }}</p>
 
             <form class="d-flex justify-content-left">
               <!-- Default input -->

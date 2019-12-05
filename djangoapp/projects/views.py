@@ -5,11 +5,11 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from projects.models import NewProject
 
 
-def home(request):
-    context = {
-        'newproject': NewProject.objects.all()
-    }
-    return render(request, 'projects/home.html', context)
+# def home(request):
+#     context = {
+#         'newproject': NewProject.objects.all()
+#     }
+#     return render(request, 'projects/home.html', context)
 
 
 class NewProjectListView(ListView):
@@ -21,6 +21,7 @@ class NewProjectListView(ListView):
 
 class NewProjectDetailView(LoginRequiredMixin, DetailView):
     model = NewProject
+    context_object_name = 'newproject'
 
 
 def about(request):

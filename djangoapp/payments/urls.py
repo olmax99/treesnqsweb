@@ -6,5 +6,5 @@ from . import views
 app_name = 'order'
 
 urlpatterns = [
-    path('', views.list_items, name='list_items')
+    path('', views.projects_checkout, name='checkout')
 ]
