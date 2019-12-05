@@ -7,7 +7,7 @@ verify_ssl = true
 gunicorn = "*"
 
 [packages]
-django = "==2.2.6"
+django = "==2.2.8"
 psycopg2-binary = "*"
 whitenoise = "*"
 django-crispy-forms = "*"
