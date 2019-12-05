@@ -18,3 +18,6 @@ class NewProject(models.Model):
 
     def get_add_to_cart_url(self):
         return reverse_lazy('add-to-cart', args=[self.id])
+
+    def get_remove_from_cart_url(self):
+        return reverse_lazy('remove-from-cart', args=[self.id])

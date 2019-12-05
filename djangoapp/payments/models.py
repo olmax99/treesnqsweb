@@ -27,7 +27,7 @@ class Order(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     items = models.ManyToManyField(OrderItem)
     order_created = models.DateTimeField(auto_now_add=True)
-    ordered_date = models.DateField
+    ordered_date = models.DateTimeField()
     ordered = models.BooleanField(default=False)
 
     def __str__(self):

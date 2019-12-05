@@ -1,7 +1,12 @@
 from django.urls import path
 
-from projects.views import NewProjectListView, NewProjectDetailView
-from .views import about, add_to_cart
+from projects.views import (
+    NewProjectListView,
+    NewProjectDetailView,
+    about,
+    add_to_cart,
+    remove_from_cart
+)
 
 
 urlpatterns = [
@@ -9,4 +14,5 @@ urlpatterns = [
     path('projects/<int:pk>/', NewProjectDetailView.as_view(), name='newproject-detail'),
     path('about/', about, name='treesnqs-about'),
     path('add-to-cart/<int:pk>/', add_to_cart, name='add-to-cart'),
+    path('remove-from-cart/<int:pk>/', remove_from_cart, name='remove-from-cart'),
 ]
