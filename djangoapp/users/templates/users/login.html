@@ -6,28 +6,28 @@
     <div class="container pt-5">
       <!--Section: Projects v.3-->
       <section class="text-left mb-4">
-          <div class="container pt-5">
-            <div class="content-section">
-                <form method="POST">
-                    {% csrf_token %}
-                    <fieldset class="form-group">
-                        <legend class="border-bottom mb-4">Log in</legend>
-                        {{ form|crispy }}
-                    </fieldset>
-                    <div class="form-group">
-                        <button class="btn btn-outline-info" type="submit">Sign In</button>
-                        <small class="text-muted ml-2">
-                            <a href="{% url 'password_reset' %}">Forgot Password?</a>
-                        </small>
-                    </div>
-                </form>
-                <div class="border-top pt-3">
-                    <small class="text-muted">
-                        Need an account? <a class="ml-2" href="{% url 'register' %}">Register here.</a>
+        <div class="row row fadeIn pt-5">
+          <div class="col-6 offset-3">
+            <form method="POST">
+                {% csrf_token %}
+                <fieldset class="form-group">
+                    <legend class="border-bottom mb-4">Log in</legend>
+                    {{ form|crispy }}
+                </fieldset>
+                <div class="form-group">
+                    <button class="btn btn-outline-info" type="submit">Sign In</button>
+                    <small class="text-muted ml-2">
+                        <a href="{% url 'password_reset' %}">Forgot Password?</a>
                     </small>
                 </div>
+            </form>
+            <div class="border-top pt-3">
+                <small class="text-muted">
+                    Need an account? <a class="ml-2" href="{% url 'register' %}">Register here.</a>
+                </small>
             </div>
           </div>
+        </div>
       </section>
     </div>
   </main>

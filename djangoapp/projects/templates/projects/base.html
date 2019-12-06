@@ -1,4 +1,5 @@
 {% load static %}
+{% load cart_template_tags %}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -69,11 +70,6 @@
 
         <!-- Left -->
         <ul class="navbar-nav mr-auto">
-          <li class="nav-item active">
-            <a class="nav-link waves-effect" href="{% url 'treesnqs-home' %}">Home
-              <span class="sr-only">(current)</span>
-            </a>
-          </li>
           <li class="nav-item">
             <a class="nav-link waves-effect" href="{% url 'treesnqs-about' %}" target="_blank">About</a>
           </li>
@@ -82,12 +78,12 @@
         <!-- Right -->
         <ul class="navbar-nav nav-flex-icons">
           {% if user.is_authenticated %}
-            <li class="nav-item">
+            <li class="nav-item mr-3">
               <small class="navbar-text">Hello,{{ user.get_username }}</small>
             </li>
             <li class="nav-item">
               <a class="nav-link waves-effect">
-                <span class="badge red z-depth-1 mr-1"> 1 </span>
+                <span class="badge red z-depth-1 mr-1"> {{ user|cart_item_count }} </span>
                 <i class="fas fa-shopping-cart"></i>
                 <span class="clearfix d-none d-sm-inline-block"> Cart </span>
               </a>
@@ -99,13 +95,6 @@
               <a class="nav-item nav-link" href="{% url 'logout' %}">Logout</a>
             </li>
           {% else %}
-            <li class="nav-item">
-              <a class="nav-link waves-effect">
-                <span class="badge red z-depth-1 mr-1"> 1 </span>
-                <i class="fas fa-shopping-cart"></i>
-                <span class="clearfix d-none d-sm-inline-block"> Cart </span>
-              </a>
-            </li>
             <li class="nav-item">
               <a class="nav-item nav-link" href="{% url 'login' %}">Login</a>
             </li>
@@ -125,18 +114,18 @@
   <main role="main" class="container-fluid no-padding">
       <div class="row">
         <div class="col-md-12">
-          <div class="mt-5 pt-4">
-            {% if messages %}
-                {% for message in messages %}
+          {% if messages %}
+            <div class="mt-5 pt-4">
+              {% for message in messages %}
                 <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
                   {{ message }}
                   <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                   </button>
                 </div>
-                {% endfor %}
-            {% endif %}
-          </div>
+              {% endfor %}
+            </div>
+          {% endif %}
           {% block content %}{% endblock %}
         </div>
       </div>
