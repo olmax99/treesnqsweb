@@ -6,8 +6,9 @@
   <main>
     <div class="container pt-5">
       <!--Section: Projects v.3-->
-      <section class="text-center mb-4">
-        <div class="row wow fadeIn col-md-8 pt-5">
+      <section class="text-left mb-4">
+        <div class="row wow fadeIn col-md-10 pt-5">
+          <div class="col-10 offset-2">
           <hr>
           <h2>Order Summary</h2>
             <div class="table-responsive text-nowrap">
@@ -25,10 +26,14 @@
                 <tbody>
                 {% for order_item in object.items.all %}
                   <tr>
-                    <th scope="row">1</th>
+                    <th scope="row">{{ forloop.counter }}</th>
                     <td>{{ order_item.item.title }}</td>
                     <td>{{ order_item.item.price }}</td>
-                    <td>{{ order_item.quantity }}</td>
+                      <td>
+                          <a href="{% url 'remove-single-item' order_item.item.id %}"><i class="fas fa-minus mr-2"></i></a>
+                          {{ order_item.quantity }}
+                          <a href="{% url 'add-to-cart' order_item.item.id %}"><i class="fas fa-plus ml-2"></i></a>
+                      </td>
                     <td>
                     {%  if order_item.item.discount_price_member and order_item.user.profile.member and order_item.user.profile.tree == 'member'  %}
                       CHF {{ order_item.get_total_member_discount_item_price }}
@@ -39,13 +44,36 @@
                     {% else %}
                       CHF {{ order_item.get_total_item_price }}
                     {% endif %}
+                    <a href="{% url 'remove-from-cart' order_item.item.id %}"><i class="fas fa-trash float-right"></i></a>
                     </td>
                   </tr>
+                  {% empty %}
+                  <tr>
+                      <td colspan="5">Your cart is empty.</td>
+                  </tr>
+                  <tr>
+                      <td colspan="5">
+                      <a class="btn btn-outline-info float-right" href="/">Continue</a>
+                      </td>
+                  </tr>
                 {% endfor %}
+                {% if object.get_total %}
+                  <tr>
+                    <td colspan="4"><b>Order Total</b></td>
+                    <td><b>CHF {{ object.get_total }}</b></td>
+                  </tr>
+                  <tr>
+                      <td colspan="5">
+                      <a class="btn btn-outline-info float-right ml-2" href="/checkout/">Proceed to Checkout</a>
+                      <a class="btn btn-secondary float-right" href="/">Back to Projects</a>
+                      </td>
+                  </tr>
+                  {% endif %}
+
                 </tbody>
               </table>
-
             </div>
+          </div>
         </div>
 
       <!--/.Projects Overview-->
