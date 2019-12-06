@@ -10,7 +10,8 @@ class Profile(models.Model):
     organization = models.CharField(max_length=54, blank=True, null=True)
     # Indicates label in order to verify eligibility for discount in case of NonProfit or Member tree
     # Can be only changed by admin and will result in different pricing model
-    verified = models.BooleanField(default=False)
+    member = models.BooleanField(default=False)
+    nonprofit = models.BooleanField(default=False)
 
     def __str__(self):
         return f"{self.user.username} profile"

@@ -16,8 +16,17 @@ class OrderItem(models.Model):
     def get_total_item_price(self):
         return self.item.price * self.quantity
 
-    def get_total_discount_item_price(self):
+    def get_total_nonprofit_discount_item_price(self):
         return self.item.discount_price_nonprofit * self.quantity
+
+    def get_total_member_discount_item_price(self):
+        return self.item.discount_price_member * self.quantity
+
+    def get_amount_saved_member(self):
+        return self.get_total_item_price() - self.get_total_member_discount_item_price()
+
+    def get_amount_saved_nonprofit(self):
+        return self.get_total_item_price() - self.get_total_nonprofit_discount_item_price()
 
 
 class Order(models.Model):

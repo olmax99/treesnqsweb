@@ -79,8 +79,11 @@
         <ul class="navbar-nav nav-flex-icons">
             {% if user.is_authenticated %}
             <li class="nav-item mr-3">
-            {% if user.profile.verified %}
-              <span class="badge green z-depth-1 mr-1"> verified </span>
+            {% if user.profile.member %}
+              <span class="badge green z-depth-1 mr-1"> Member </span>
+              <small class="navbar-text">Hello,{{ user.get_username }}</small>
+            {% elif user.profile.nonprofit %}
+              <span class="badge green z-depth-1 mr-1"> Nonprofit </span>
               <small class="navbar-text">Hello,{{ user.get_username }}</small>
             {% else %}
               <small class="navbar-text">Hello,{{ user.get_username }}</small>

@@ -4,7 +4,7 @@
 
   <!--Main layout-->
   <main>
-    <div class="container">
+    <div class="container pt-5">
       <!--Section: Projects v.3-->
       <section class="text-center mb-4">
         <div class="row wow fadeIn col-md-8 pt-5">
@@ -29,8 +29,17 @@
                     <td>{{ order_item.item.title }}</td>
                     <td>{{ order_item.item.price }}</td>
                     <td>{{ order_item.quantity }}</td>
-
-                    <td>???</td>
+                    <td>
+                    {%  if order_item.item.discount_price_member and order_item.user.profile.member and order_item.user.profile.tree == 'member'  %}
+                      CHF {{ order_item.get_total_member_discount_item_price }}
+                      <span class="badge badge-light ml-2">Saving CHF {{ order_item.get_amount_saved_member }}</span>
+                    {%  elif order_item.item.discount_price_nonprofit and order_item.user.profile.nonprofit and order_item.user.profile.tree == 'nonprofit' %}
+                      CHF {{ order_item.get_total_nonprofit_discount_item_price }}
+                      <span class="badge badge-light ml-2">Saving CHF {{ order_item.get_amount_saved_member }}</span>
+                    {% else %}
+                      CHF {{ order_item.get_total_item_price }}
+                    {% endif %}
+                    </td>
                   </tr>
                 {% endfor %}
                 </tbody>
