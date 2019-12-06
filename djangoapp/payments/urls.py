@@ -1,10 +1,11 @@
 from django.urls import path
 
-from . import views
+from payments.views import projects_checkout, OrderSummaryView
 
 # Needed for include(... namespace=...)
 app_name = 'order'
 
 urlpatterns = [
-    path('', views.projects_checkout, name='checkout'),
+    path('', projects_checkout, name='checkout'),
+    path('summary/', OrderSummaryView.as_view(), name='order-summary')
 ]

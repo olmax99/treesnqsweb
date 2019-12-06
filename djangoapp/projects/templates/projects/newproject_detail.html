@@ -35,11 +35,16 @@
             </div>
 
             <p class="lead">
-              {% if newproject.discount_price %}
+              {% if newproject.discount_price_nonprofit and user.profile.verified %}
               <span class="mr-1">
-                <del>CHF {{ newproject.discount_price }}</del>
+                <del>CHF {{ newproject.price }}</del>
               </span>
-              <span>CHF {{ newproject.price }}</span>
+              <span>CHF {{ newproject.discount_price_nonprofit }}</span>
+              {% elif newproject.discount_price_member and user.profile.verified %}
+              <span class="mr-1">
+                <del>CHF {{ newproject.price }}</del>
+              </span>
+              <span>CHF {{ newproject.discount_price_member }}</span>
               {% else %}
               <span>CHF {{ newproject.price }}</span>
               {% endif %}

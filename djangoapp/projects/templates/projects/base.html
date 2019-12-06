@@ -77,13 +77,18 @@
 
         <!-- Right -->
         <ul class="navbar-nav nav-flex-icons">
-          {% if user.is_authenticated %}
+            {% if user.is_authenticated %}
             <li class="nav-item mr-3">
+            {% if user.profile.verified %}
+              <span class="badge green z-depth-1 mr-1"> verified </span>
               <small class="navbar-text">Hello,{{ user.get_username }}</small>
+            {% else %}
+              <small class="navbar-text">Hello,{{ user.get_username }}</small>
+            {% endif %}
             </li>
             <li class="nav-item">
-              <a class="nav-link waves-effect">
-                <span class="badge red z-depth-1 mr-1"> {{ user|cart_item_count }} </span>
+              <a class="nav-link waves-effect" href="{% url 'order:order-summary' %}">
+                <span class="badge blue-gradient z-depth-1 mr-1"> {{ user|cart_item_count }} </span>
                 <i class="fas fa-shopping-cart"></i>
                 <span class="clearfix d-none d-sm-inline-block"> Cart </span>
               </a>

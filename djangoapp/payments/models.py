@@ -4,15 +4,6 @@ from django.db import models
 from projects.models import NewProject
 
 
-# class Item(models.Model):
-#     title = models.CharField(max_length=52)
-#     # TODO: Depending on user profile, "Default", "Member", "NonProfit"
-#     price = models.FloatField()
-#
-#     def __str__(self):
-#         return self.title
-
-
 class OrderItem(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     ordered = models.BooleanField(default=False)
@@ -21,6 +12,12 @@ class OrderItem(models.Model):
 
     def __str__(self):
         return f"{self.quantity} of {self.item.title}"
+
+    def get_total_item_price(self):
+        return self.item.price * self.quantity
+
+    def get_total_discount_item_price(self):
+        return self.item.discount_price_nonprofit * self.quantity
 
 
 class Order(models.Model):

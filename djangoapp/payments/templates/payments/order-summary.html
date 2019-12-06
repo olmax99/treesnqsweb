@@ -1,0 +1,51 @@
+{% extends "projects/base.html" %}
+
+{% block content %}
+
+  <!--Main layout-->
+  <main>
+    <div class="container">
+      <!--Section: Projects v.3-->
+      <section class="text-center mb-4">
+        <div class="row wow fadeIn col-md-8 pt-5">
+          <hr>
+          <h2>Order Summary</h2>
+            <div class="table-responsive text-nowrap">
+
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Item Title</th>
+                    <th scope="col">Price</th>
+                    <th scope="col">Quantity</th>
+                    <th scope="col">Total Item Price</th>
+                  </tr>
+                </thead>
+                <tbody>
+                {% for order_item in object.items.all %}
+                  <tr>
+                    <th scope="row">1</th>
+                    <td>{{ order_item.item.title }}</td>
+                    <td>{{ order_item.item.price }}</td>
+                    <td>{{ order_item.quantity }}</td>
+
+                    <td>???</td>
+                  </tr>
+                {% endfor %}
+                </tbody>
+              </table>
+
+            </div>
+        </div>
+
+      <!--/.Projects Overview-->
+
+      </section>
+      <!--Section: Products v.3-->
+
+    </div>
+  </main>
+  <!--Main layout-->
+
+{% endblock content %}

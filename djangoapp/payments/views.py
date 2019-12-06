@@ -1,6 +1,9 @@
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, get_object_or_404, redirect
-from django.utils import timezone
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core.checks import messages
+from django.core.exceptions import ObjectDoesNotExist
+from django.shortcuts import render, redirect
+from django.views import View
 
 from payments.models import NewProject, OrderItem, Order
 
@@ -13,19 +16,14 @@ def projects_checkout(request):
     return render(request, "payments/checkout-page.html", context)
 
 
-# @login_required
-# def add_to_cart(request, pk):
-#     project = get_object_or_404(NewProject, pk=pk)
-#     order_item = OrderItem.objects.create(item=project)
-#     order_query_set = Order.objects.filter(user=request.user, ordered=False)
-#     if order_query_set .exists():
-#         order = order_query_set[0]
-#         # check if order_item is already in the order
-#         if order.item.filter(project__pk=project.pk).exists():
-#             order_item.quantity += 1
-#             order_item.save()
-#     else:
-#         ordered_date = timezone.now()
-#         order = OrderItem.objects.create(user=request.user, ordered_date=ordered_date)
-#         order.items.add(order_item)
-#     return redirect('projects/newproject-detail', pk)
+class OrderSummaryView(LoginRequiredMixin, View):
+    def get(self, *args, **kwargs):
+        try:
+            order = Order.objects.get(user=self.request.user, ordered=False)
+            context = {
+                'object': order
+            }
+            return render(self.request, 'payments/order-summary.html', context)
+        except ObjectDoesNotExist:
+            messages.error(self.request, "You don't have any Orders, yet.")
+            return redirect('/')
