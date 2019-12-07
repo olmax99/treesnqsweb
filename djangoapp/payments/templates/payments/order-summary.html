@@ -64,8 +64,8 @@
                   </tr>
                   <tr>
                       <td colspan="5">
-                      <a class="btn btn-outline-info float-right ml-2" href="/checkout/">Proceed to Checkout</a>
-                      <a class="btn btn-secondary float-right" href="/">Back to Projects</a>
+                      <a class="btn btn-outline-info float-right ml-2" href="{% url 'order:checkout' %}">Proceed to Checkout</a>
+                      <a class="btn btn-secondary float-right" href="{% url 'treesnqs-home' %}">Back to Projects</a>
                       </td>
                   </tr>
                   {% endif %}

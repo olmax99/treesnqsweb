@@ -15,6 +15,7 @@ pillow = "*"
 boto3 = "*"
 django-storages = "*"
 dj-stripe = "*"
+django-countries = "*"
 
 [requires]
 python_version = "3.8"
