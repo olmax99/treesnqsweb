@@ -5,6 +5,22 @@ from django_countries.fields import CountryField
 from projects.models import NewProject
 
 
+# TODO: EVALUATE WHICH PARTS OF THE PAYMENTS MODELS CAN BE REPLACED BY DJ-STRIPE MODELS
+#  See path/to/side-packages/djstripe/models
+
+
+# TODO: Evaluate if djstripe.models.core.Charge can replace this:
+# This class is used in order to track the lifecycle of the payment
+class Payment(models.Model):
+    stripe_charge_id = models.CharField(max_length=52)
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True, null=True)
+    amount = models.FloatField()
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.user.username
+
+
 class OrderItem(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     ordered = models.BooleanField(default=False)
@@ -49,6 +65,7 @@ class Order(models.Model):
     ordered_date = models.DateTimeField()
     ordered = models.BooleanField(default=False)
     billing_address = models.ForeignKey('BillingAddress', on_delete=models.CASCADE, blank=True, null=True)
+    payment = models.ForeignKey('Payment', on_delete=models.CASCADE, blank=True, null=True)
 
     def __str__(self):
         return self.user.username
@@ -69,4 +86,5 @@ class BillingAddress(models.Model):
 
     def __str__(self):
         return self.user.username
+
 

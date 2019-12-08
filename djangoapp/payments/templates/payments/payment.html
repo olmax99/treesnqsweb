@@ -104,7 +104,7 @@
       <div class="row row fadeIn pt-5">
 
         <!--Grid column-->
-        <div class="col-md-10 mb-4 offset-1">
+        <div class="col-md-8 mb-4 offset-2">
 
           <!--Payment-->
           <div class="card text-left">
@@ -121,14 +121,15 @@
               </div>
             {% endif %}
 
-            <form action="/charge" method="post" id="stripe-form">
+            <form action="." method="post" id="stripe-form">
               <div class="stripe-form-row">
+                {% csrf_token %}
                 <label for="card-element" id="stripeBtnLabel">
-                  Credit or debit card
+                  <small class="ml-2 grey-text">Credit or debit card</small>
                 </label>
                 <div id="card-element" class="StripeElement StripeElement--empty"><div class="__PrivateStripeElement" style="margin: 0px !important; padding: 0px !important; border: medium none !important; display: block !important; background: transparent none repeat scroll 0% 0% !important; position: relative !important; opacity: 1 !important;"><iframe allowtransparency="true" scrolling="no" name="__privateStripeFrame5" allowpaymentrequest="true" src="https://js.stripe.com/v3/elements-inner-card-29e7a63866ce88b0539829806479aa7e.html#style[base][color]=%2332325d&amp;style[base][fontFamily]=%22Helvetica+Neue%22%2C+Helvetica%2C+sans-serif&amp;style[base][fontSmoothing]=antialiased&amp;style[base][fontSize]=16px&amp;style[base][::placeholder][color]=%23aab7c4&amp;style[invalid][color]=%23fa755a&amp;style[invalid][iconColor]=%23fa755a&amp;componentName=card&amp;wait=false&amp;rtl=false&amp;keyMode=test&amp;apiKey=pk_test_5fmmEWu1gFayFdYFmctskmcX006YNB5lQl&amp;origin=https%3A%2F%2Fstripe.com&amp;referrer=https%3A%2F%2Fstripe.com%2Fdocs%2Fstripe-js&amp;controllerId=__privateStripeController1" title="Secure payment input frame" style="border: medium none !important; margin: 0px !important; padding: 0px !important; width: 1px !important; min-width: 100% !important; overflow: hidden !important; display: block !important; height: 19.2px;" frameborder="0"></iframe><input class="__PrivateStripeElement-input" aria-hidden="true" aria-label=" " autocomplete="false" maxlength="1" style="border: medium none !important; display: block !important; position: absolute !important; height: 1px !important; top: 0px !important; left: 0px !important; padding: 0px !important; margin: 0px !important; width: 100% !important; opacity: 0 !important; background: transparent none repeat scroll 0% 0% !important; pointer-events: none !important; font-size: 16px !important;"></div></div>
               </div>
-              <div class="stripe-form-row">
+              <div class="stripe-form-row col-md-4">
                 <button id="stripeBtn">Submit Payment</button>
               </div>
               <!-- Used to display form errors. -->
@@ -140,6 +141,56 @@
 
         </div>
         <!--Grid column-->
+
+        <!--Grid column-->
+        <div class="col-md-8 mb-4 offset-2">
+
+          <!-- Heading -->
+          <h4 class="d-flex justify-content-between align-items-center mb-3">
+            <span class="text-muted">Your cart</span>
+            <span class="badge badge-secondary badge-pill">3</span>
+          </h4>
+
+          <!-- Cart -->
+          <ul class="list-group mb-3 z-depth-1">
+            <li class="list-group-item d-flex justify-content-between lh-condensed">
+              <div>
+                <h6 class="my-0">Product name</h6>
+                <small class="text-muted">Brief description</small>
+              </div>
+              <span class="text-muted">$12</span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between lh-condensed">
+              <div>
+                <h6 class="my-0">Second product</h6>
+                <small class="text-muted">Brief description</small>
+              </div>
+              <span class="text-muted">$8</span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between lh-condensed">
+              <div>
+                <h6 class="my-0">Third item</h6>
+                <small class="text-muted">Brief description</small>
+              </div>
+              <span class="text-muted">$5</span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between bg-light">
+              <div class="text-success">
+                <h6 class="my-0">Promo code</h6>
+                <small>EXAMPLECODE</small>
+              </div>
+              <span class="text-success">-$5</span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between">
+              <span>Total (USD)</span>
+              <strong>$20</strong>
+            </li>
+          </ul>
+          <!-- Cart -->
+
+        </div>
+        <!--Grid column-->
+
 
       </div>
       <!--Grid row-->
@@ -194,7 +245,7 @@
   });
 
   // Handle form submission.
-  var form = document.getElementById('payment-form');
+  var form = document.getElementById('stripe-form');
   form.addEventListener('submit', function(event) {
     event.preventDefault();
 
@@ -213,7 +264,7 @@
   // Submit the form with the token ID.
   function stripeTokenHandler(token) {
     // Insert the token ID into the form so it gets submitted to the server
-    var form = document.getElementById('payment-form');
+    var form = document.getElementById('stripe-form');
     var hiddenInput = document.createElement('input');
     hiddenInput.setAttribute('type', 'hidden');
     hiddenInput.setAttribute('name', 'stripeToken');
@@ -224,10 +275,6 @@
     form.submit();
   }
 
-  var successElement = document.getElementById('stripe-token-handler');
-  document.querySelector('.wrapper').addEventListener('click', function() {
-    successElement.className = 'is-hidden';
-  });
 
 </script>
 

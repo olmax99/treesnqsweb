@@ -59,7 +59,7 @@ $ make charts
 
 Initialize the local repo for development:
 ```
-$ minikube start --vm-driver kvm2 --memory 4096 --cpus 2
+$ minikube start --vm-driver kvm2 --memory 4096 --cpus 2 --disk-size='40000mb'
 
 # Install Tiller (Helm v2)
 $ helm init --history-max 200
@@ -191,12 +191,28 @@ during new model creation.
 
 ### Helm/Skaffold
 
-- How to access the postgres Pod for querying the database?
+- How to access the postgres Pod and postgresclient for querying the database?
 
 ```
 $ kubectl run djangohelm-postgresql-client --rm --tty -i --restart='Never' --namespace default --image docker.io/bitnami/postgresql:11.6.0-debian-9-r0 --env="PGPASSWORD=super_secret" --command -- psql --host djangohelm-postgresql -U postgres -d postgres -p 5432
 
 ```
+
+- How to create an local backup from current postgres and how restore it?
+
+```
+# BACKUP
+$ kubectl exec -ti djangohelm-postgresql-0 -- /bin/bash -c "pg_dump -U postgres djangoapp" > \
+/tmp/$(date +"%Y_%m_%d_%I_%M_%p")_djangoapp.bak
+
+# RESTORE
+
+cat 2019_12_08_10_18_AM_djangoapp.bak | kubectl exec -i djangohelm-postgresql-0 -- /bin/bash \
+-c "PGPASSWORD="super_secret" psql -U postgres -d djangoapp"
+
+
+```
+
 
 - What is the directory the actual data is written to?
 
