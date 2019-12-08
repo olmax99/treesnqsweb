@@ -4,11 +4,15 @@ from django.contrib import messages
 from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import render, redirect
 from django.views import View
+# from djstripe.models import Charge
 
 from payments.forms import CheckoutForm
 from payments.models import NewProject, OrderItem, Order, BillingAddress, Payment
 
 import logging
+
+# import djstripe
+# from djstripe import webhooks
 
 import stripe
 from stripe import error
@@ -28,7 +32,11 @@ stripe.api_key = settings.STRIPE_TEST_SECRET_KEY
 
 class PaymentView(LoginRequiredMixin, View):
     def get(self, *args, **kwargs):
-        return render(self.request, "payments/payment.html")
+        order = Order.objects.get(user=self.request.user, ordered=False)
+        context = {
+            'order': order
+        }
+        return render(self.request, "payments/payment.html", context)
 
     # TODO: Replace with dj-stripe models if possible
     # Requests are handled to go to https://js.stripe.com/v3/
@@ -47,7 +55,7 @@ class PaymentView(LoginRequiredMixin, View):
                 description="Charge from djangoapp@treesnqs.com"
             )
             # TODO: Can this model be replaced by dj-stripe model? Which one?
-            # STEP 2: Create the payment
+            # STEP 2: Create the payment model for handling payment lifecycle later on
             payment = Payment()
             payment.stripe_charge_id = charge['id']
             payment.user = self.request.user
@@ -125,8 +133,10 @@ class PaymentView(LoginRequiredMixin, View):
 class CheckoutView(LoginRequiredMixin, View):
     def get(self, *args, **kwargs):
         form = CheckoutForm()
+        order = Order.objects.get(user=self.request.user, ordered=False)
         context = {
-            'form': form
+            'form': form,
+            'order': order
         }
         return render(self.request, "payments/checkout-page.html", context)
 
@@ -154,10 +164,13 @@ class CheckoutView(LoginRequiredMixin, View):
                 order.save()
                 # logger.info(form.cleaned_data)
                 # logger.info("The form is valid.")
-                # TODO: Add redirect to the selected payment option
-                return redirect('order:checkout')
-            messages.warning(self.request, "Failed Checkout.")
-            return render(self.request, 'payments/order-summary.html')
+                if payment_option == 'S':
+                    return redirect('order:payment', pay_option='stripe')
+                # elif payment_option == 'P':
+                #     return redirect('order:payment', pay_option='paypal')
+                else:
+                    messages.warning(self.request, "Invalid payment option.")
+                    return render(self.request, 'payments/order-summary.html')
         except ObjectDoesNotExist:
             # logger.info(self.request.POST)
             messages.error(self.request, "You don't have any Orders, yet.")
