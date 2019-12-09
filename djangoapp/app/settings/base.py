@@ -10,23 +10,12 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/2.2/ref/settings/
 """
 
+from decouple import config
 import os
-
-# Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.2/howto/deployment/checklist/
-
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv('DJANGOAPP_FERNET_KEY', '42mhp!suat8*4z%4(qd-p#2rft8*tngm8e!_av^r@cqbjno3@4')
-
-# TODO: Move to k8s ConfigMap object
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-ALLOWED_HOSTS = ['*']
-# ALLOWED_HOSTS = ['192.168.39.196', 'localhost', '127.0.0.1']
 
 
 # Application definition
@@ -59,33 +48,6 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'app.urls'
 
-LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'formatters': {
-        'verbose': {
-            'format': '[%(process)d] [%(asctime)s] %(levelname)s [%(filename)s:%(lineno)s] %(message)s'
-        }
-    },
-    'handlers': {
-        'console': {
-            'class': 'logging.StreamHandler',
-            'formatter': 'verbose',
-        },
-    },
-    'loggers': {
-        'django': {
-            'handlers': ['console'],
-            'level': os.getenv('DJANGO_LOG_LEVEL', 'INFO'),
-            'propagate': True,
-        },
-    },
-    'root': {
-        'level': 'INFO',
-        'handlers': ['console']
-    },
-}
-
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -103,23 +65,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'app.wsgi.application'
-
-
-# Database
-# https://docs.djangoproject.com/en/2.2/ref/settings/#databases
-
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv('POSTGRES_DB', 'postgres'),
-        'USER': os.getenv('POSTGRES_USER', 'postgres'),
-        'PASSWORD': os.getenv('POSTGRES_PASSWORD', ''),
-        'HOST': os.getenv('POSTGRES_HOST'),
-        'PORT': '5432',
-    }
-}
-
 
 # Password validation
 # https://docs.djangoproject.com/en/2.2/ref/settings/#auth-password-validators
@@ -147,7 +92,7 @@ LANGUAGE_CODE = 'en-us'
 
 # TODO: Get timezone from ConfigMap
 # TIME_ZONE = 'UTC'
-TIME_ZONE = os.getenv('DJANGOAPP_CUSTOM_TIME_ZONE', 'UTC')
+TIME_ZONE = os.environ['DJANGOAPP_CUSTOM_TIME_ZONE']
 
 USE_I18N = True
 
@@ -155,35 +100,24 @@ USE_L10N = True
 
 USE_TZ = True
 
-
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/2.2/howto/static-files/
-
-STATIC_URL = '/opt/static/'
-STATIC_ROOT = '/opt/static/'
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
-
-MEDIA_URL = '/opt/media/'
-MEDIA_ROOT = '/opt/media/'
-
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 LOGIN_REDIRECT_URL = 'treesnqs-home'
 LOGIN_URL = 'login'
 
-ADMIN_DEFAULT_URL = f"{os.getenv('DJANGOAPP_ADMIN_DEFAULT_URL', 'admin')}/"
+ADMIN_DEFAULT_URL = f"{os.environ['DJANGOAPP_ADMIN_DEFAULT_URL']}/"
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = os.getenv('DJANGOAPP_EMAIL_USER', 'unknown')
-EMAIL_HOST_PASSWORD = os.getenv('DJANGOAPP_EMAIL_PASSWORD', 'unknown')
+EMAIL_HOST_USER = os.environ['DJANGOAPP_EMAIL_USER']
+EMAIL_HOST_PASSWORD = os.environ['DJANGOAPP_EMAIL_PASSWORD']
 
 # AWS settings media files (user generated)
-AWS_ACCESS_KEY_ID = os.getenv('DJANGOAPP_AWS_ACCESS_KEY_ID', 'default')
-AWS_SECRET_ACCESS_KEY = os.getenv('DJANGOAPP_AWS_SECRET_ACCESS_KEY', 'default')
-AWS_STORAGE_BUCKET_NAME = os.getenv('DJANGOAPP_AWS_STORAGE_BUCKET_NAME', 'default')
+AWS_ACCESS_KEY_ID = os.environ['DJANGOAPP_AWS_ACCESS_KEY_ID']
+AWS_SECRET_ACCESS_KEY = os.environ['DJANGOAPP_AWS_SECRET_ACCESS_KEY']
+AWS_STORAGE_BUCKET_NAME = os.environ['DJANGOAPP_AWS_STORAGE_BUCKET_NAME']
 AWS_S3_FILE_OVERWRITE = False
 AWS_DEFAULT_ACL = None
 AWS_S3_REGION_NAME = 'eu-central-1'
@@ -198,11 +132,11 @@ AWS_S3_SIGNATURE_VERSION = 's3v4'
 # https://dashboard.stripe.com/test/dashboard
 
 # Publishable Key pk_test_5fmmEWu1gFayFdYFmctskmcX006YNB5lQl
-STRIPE_LIVE_PUBLIC_KEY = os.getenv("DJANGOAPP_STRIPE_LIVE_PUBLIC_KEY", "default")
-STRIPE_LIVE_SECRET_KEY = os.getenv("DJANGOAPP_STRIPE_LIVE_SECRET_KEY", "default")
-STRIPE_TEST_PUBLIC_KEY = os.getenv("DJANGOAPP_STRIPE_TEST_PUBLIC_KEY", "default")
-STRIPE_TEST_SECRET_KEY = os.getenv("DJANGOAPP_STRIPE_TEST_SECRET_KEY", "default")
-DJSTRIPE_WEBHOOK_SECRET = os.getenv("DJANGOAPP_DJSTRIPE_WEBHOOK_SECRET", "default")
+STRIPE_LIVE_PUBLIC_KEY = os.environ["DJANGOAPP_STRIPE_LIVE_PUBLIC_KEY"]
+STRIPE_LIVE_SECRET_KEY = os.environ["DJANGOAPP_STRIPE_LIVE_SECRET_KEY"]
+STRIPE_TEST_PUBLIC_KEY = os.environ["DJANGOAPP_STRIPE_TEST_PUBLIC_KEY"]
+STRIPE_TEST_SECRET_KEY = os.environ["DJANGOAPP_STRIPE_TEST_SECRET_KEY"]
+DJSTRIPE_WEBHOOK_SECRET = os.environ["DJANGOAPP_DJSTRIPE_WEBHOOK_SECRET"]
 # TODO: Move to k8s ConfigMap object
 # Change to True in production
 STRIPE_LIVE_MODE = False

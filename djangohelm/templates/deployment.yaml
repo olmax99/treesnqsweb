@@ -46,6 +46,8 @@ spec:
                 key: djangoapp-fernetkey
           - name: DJANGOAPP_CUSTOM_TIME_ZONE
             value: {{ .Values.djangoappCustomTimezone }}
+          - name: DJANGO_LOG_LEVEL
+            value: {{ .Values.djangoappLogLevel }}
           - name: DJANGOAPP_ADMIN_DEFAULT_URL
             valueFrom:
               secretKeyRef:
@@ -77,6 +79,16 @@ spec:
               secretKeyRef:
                 name: {{ template "djangohelm.fullname" . }}
                 key: djangoapp-stripetest
+          - name: DJANGOAPP_STRIPE_LIVE_PUBLIC_KEY
+            valueFrom:
+              secretKeyRef:
+                name: {{ template "djangohelm.fullname" . }}
+                key: djangoapp-stripelivepub
+          - name: DJANGOAPP_STRIPE_LIVE_SECRET_KEY
+            valueFrom:
+              secretKeyRef:
+                name: {{ template "djangohelm.fullname" . }}
+                key: djangoapp-stripelivesecret
           - name: DJANGOAPP_DJSTRIPE_WEBHOOK_SECRET
             valueFrom:
               secretKeyRef:

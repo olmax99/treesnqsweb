@@ -16,6 +16,6 @@ from django.core.wsgi import get_wsgi_application
 # Ensures that parent path is top directory - NEEDED FOR DJANGO BUILT-IN SERVER
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'app.settings')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'app.settings.development')
 
 application = get_wsgi_application()

@@ -1,6 +1,7 @@
 # TreesN'Qs Django Web App
 
-This is the web app project for TreesN'Qs. A simple Django site hosted via Kubernetes in AWS EKS.
+This is the web app project for TreesN'Qs. A simple Django site hosted via Kubernetes. It is
+comprised of a very light-weight e-commerce shop for booking project sessions.
 
 ---
 
@@ -24,8 +25,50 @@ For local development, the following components are required on the local machin
 
 ## Quickstart Development
 
-Use PYTHONPATH for manual Django manage.py tasks, e.g. reach the built-in Django server via:
-`PYTHONPATH=$(pwd) python -m pipenv run python manage.py  runserver 8081`.
+### [Optionally] Run local runserver only
+
+Sometimes, for quick debugging or front-end tasks etc. it is faster to run the bare minimum
+Djangoapp.
+
+**NOTE:** Always try to avoid the local runserver and use minikube skaffold dev instead!!!
+
+Use PYTHONPATH for manual Django manage.py tasks, e.g. reach the built-in Django server in
+ditectory `djangoapp/` via:
+
+#### Step 1: Local environment variables
+
+All variables inside the .env file will be automatically picked up by the local runserver. In `djangoapp/`
+create the `.env` file:
+
+.env
+```
+DJANGOAPP_FERNET_KEY=<your SECRET_KEY here>
+DJANGO_LOG_LEVEL=INFO
+DJANGOAPP_CUSTOM_TIME_ZONE=UTC
+DJANGOAPP_ADMIN_DEFAULT_URL=admin
+DJANGOAPP_EMAIL_USER=<setup an gmail account>
+DJANGOAPP_EMAIL_PASSWORD=<setup an gmail account>
+DJANGOAPP_AWS_ACCESS_KEY_ID=<from your aws account>
+DJANGOAPP_AWS_SECRET_ACCESS_KEY=<from your aws account>
+DJANGOAPP_AWS_STORAGE_BUCKET_NAME=<aws bucket name for media storage>
+DJANGOAPP_STRIPE_LIVE_PUBLIC_KEY=""
+DJANGOAPP_STRIPE_LIVE_SECRET_KEY=""
+DJANGOAPP_STRIPE_TEST_PUBLIC_KEY=<from your stripe account>
+DJANGOAPP_STRIPE_TEST_SECRET_KEY=<from your stripe account>
+DJANGOAPP_STRIPE_WEBHOOK_SECRET=<optional: from your local stripe cli>
+
+
+```
+
+#### Step 2: Run local runserver
+
+```
+$ PYTHONPATH=$(pwd) python -m pipenv run python manage.py runserver 8081 --settings=app.settings.local
+
+$ PYTHONPATH=$(pwd) python -m pipenv run python manage.py makemigrations --settings=app.settings.local
+$ PYTHONPATH=$(pwd) python -m pipenv run python manage.py migrate --settings=app.settings.local
+
+```
 
 ### Packages
 
@@ -117,14 +160,20 @@ replicaCount: 1
 image: djangoapp:0.3
 initContainerImage: "alpine:3.6"
 pullPolicy: Never
-djangoappFernetKey: "fsifwieuhwof89c7s9_%adsasd*mkdms-89ijadasdsduz25%z"
+djangoappFernetKey: <Your SECRET_KEY here>
 djangoappCustomTimezone: "Europe/Zurich"
+djangoappLogLevel: INFO
 djangoappAdminDefaultUrl: admin
 djangoappEmailHostUser: example@gmail.com       <-- Replace with the Gmail account previously created
 djangoappEmailHostPassword: "super_secret"
 djangoappAwsId: default                         <-- Replace with AWS developer credentials
 djangoappAwsKey: default
-djangoappBucket: unknown
+djangoappBucket: <see cloudformation or from you aws account>
+djangoappStripeLivePub: ""
+djangoappStripeLiveKey: ""
+djangoappStripeTestPub: <from your stripe account>
+djangoappStripeTestKey: <from your stripe account>
+djangoappStripeWebHook: <from your stripe account>
 service:
   type: NodePort
   name: djangoapp
@@ -279,10 +328,20 @@ being used is always the top one indicated in `index.yaml`.
 
 ### Django
 
-- What is the entry `ALLOWED_HOSTS` in `djangoapp/settings.py` being used for? 
+- How do signals work and what is the connection to djstrip webhooks?
 
 
-#### Useful resources
+
+### iii. Stripe stuff
+
+- How can i debug webhooks?
+
+Install the stripe cli locally and run `stripe listen`.
+
+**NOTE** That way you will alse receive a new webhook token, which can be used for local testing.
+
+
+### Useful resources
 
 - [https://pythonspeed.com/articles/gunicorn-in-docker/](https://pythonspeed.com/articles/gunicorn-in-docker/)
 
@@ -292,7 +351,7 @@ being used is always the top one indicated in `index.yaml`.
 
 - [https://helm.sh/docs/intro/getting\_started/](https://helm.sh/docs/intro/getting_started/)
 
-### Where to go from here?
+## Where to go from here?
 
 - Create a minimum cost cluster using kops and spot instances:
   * [https://www.replex.io/blog/the-ultimate-guide-to-deploying-kubernetes-cluster-on-aws-ec2-spot-instances-using-kops-and-eks#walkthrough](https://www.replex.io/blog/the-ultimate-guide-to-deploying-kubernetes-cluster-on-aws-ec2-spot-instances-using-kops-and-eks#walkthrough)
@@ -460,3 +519,5 @@ configurable from main chart `values.yaml`.
 | `metrics.serviceMonitor.additionalLabels` | Used to pass Labels that are required by the Installed Prometheus Operator    | `{}`                                                         |
 | `sidecars`                                | Attach additional containers to the pod                                       | `nil`                                                        |
 | `updateStrategy`                          | Set up update strategy                                                        | `RollingUpdate`                                              |
+
+

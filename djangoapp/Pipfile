@@ -5,6 +5,7 @@ verify_ssl = true
 
 [dev-packages]
 gunicorn = "*"
+django-environ = "*"
 
 [packages]
 django = "==2.2.6"
@@ -16,6 +17,7 @@ boto3 = "*"
 django-storages = "*"
 dj-stripe = "*"
 django-countries = "*"
+python-decouple = "*"
 
 [requires]
 python_version = "3.8"

@@ -77,7 +77,7 @@ ipython_config.py
 .python-version
 
 # Environments
-.env
+djangoapp/.env
 .env.*
 .venv
 env/
@@ -95,6 +95,7 @@ dmypy.json
 .pyre/
 
 # Others
+*.sqlite3
 *.log
 *.json
 *.parquet
