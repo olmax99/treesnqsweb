@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
 from django.core.exceptions import ObjectDoesNotExist
@@ -6,8 +7,8 @@ from django.shortcuts import render, redirect
 from django.views import View
 # from djstripe.models import Charge
 
-from payments.forms import CheckoutForm
-from payments.models import NewProject, OrderItem, Order, BillingAddress, Payment
+from payments.forms import CheckoutForm, CouponForm
+from payments.models import NewProject, OrderItem, Order, BillingAddress, Payment, Coupon
 
 import logging
 
@@ -61,7 +62,12 @@ class PaymentView(LoginRequiredMixin, View):
             payment.user = self.request.user
             payment.amount = order.get_total()
             payment.save()
-            # STEP 3: Show that order is filled and assign the payment to this order
+            # STEP 3: Assign the payment to this order
+            order_items = order.items.all()
+            order_items.update(ordered=True)
+            for item in order_items:
+                item.save()
+            # STEP 4: Show that order is filled
             order.ordered = True
             order.payment = payment
             order.save()
@@ -132,13 +138,17 @@ class PaymentView(LoginRequiredMixin, View):
 
 class CheckoutView(LoginRequiredMixin, View):
     def get(self, *args, **kwargs):
-        form = CheckoutForm()
-        order = Order.objects.get(user=self.request.user, ordered=False)
-        context = {
-            'form': form,
-            'order': order
-        }
-        return render(self.request, "payments/checkout-page.html", context)
+        try:
+            order = Order.objects.get(user=self.request.user, ordered=False)
+            form = CheckoutForm()
+            context = {
+                'form': form,
+                'couponform': CouponForm(),
+                'order': order
+            }
+            return render(self.request, "payments/checkout-page.html", context)
+        except ObjectDoesNotExist:
+            return redirect("order:checkout")
 
     def post(self, *args, **kwargs):
         form = CheckoutForm(self.request.POST or None)
@@ -188,4 +198,33 @@ class OrderSummaryView(LoginRequiredMixin, View):
         except ObjectDoesNotExist:
             messages.error(self.request, "You don't have any Orders, yet.")
             return redirect('treesnqs-home')
+
+
+@login_required
+def get_coupon(request, code):
+    try:
+        coupon = Coupon.objects.get(code=code)
+        return coupon
+    except ObjectDoesNotExist:
+        messages.info(request, "This coupon does not exist.")
+        return redirect("order:checkout")
+
+
+@login_required
+def add_coupon(request):
+    if request.method == 'POST':
+        form = CouponForm(request.POST or None)
+        if form.is_valid():
+            try:
+                code = form.cleaned_data.get('code')
+                order = Order.objects.get(user=request.user, ordered=False)
+                order.coupon = get_coupon(request, code)
+                order.save()
+                messages.success(request, "Your coupon was successfully redeemed.")
+                return redirect("order:checkout")
+            except ObjectDoesNotExist:
+                messages.info(request, "You do not have an active order.")
+                return redirect("order:checkout")
+    # TODO: Create readable error message
+    return None
 

@@ -63,10 +63,12 @@ class Order(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     items = models.ManyToManyField(OrderItem)
     order_created = models.DateTimeField(auto_now_add=True)
+    # TODO: Ordered_date should be set to day when ordered is set to True
     ordered_date = models.DateTimeField()
     ordered = models.BooleanField(default=False)
     billing_address = models.ForeignKey('BillingAddress', on_delete=models.CASCADE, blank=True, null=True)
     payment = models.ForeignKey('Payment', on_delete=models.CASCADE, blank=True, null=True)
+    coupon = models.ForeignKey('Coupon', on_delete=models.SET_NULL, blank=True, null=True)
 
     def __str__(self):
         return self.user.username
@@ -87,5 +89,14 @@ class BillingAddress(models.Model):
 
     def __str__(self):
         return self.user.username
+
+
+# TODO: Replace this model with path/to/site-packages/djstripe/models/billing.Coupon
+#  NOTE: Review if djstripe coupons are linked to invoices, if so implement accordingly
+class Coupon(models.Model):
+    code = models.CharField(max_length=15)
+
+    def __str__(self):
+        return self.code
 
 
