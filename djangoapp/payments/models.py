@@ -10,7 +10,7 @@ from projects.models import NewProject
 #  See path/to/side-packages/djstripe/models
 
 
-# TODO: Evaluate if djstripe.models.core.Charge can replace this:
+# TODO: Evaluate if djstripe.models.core.PaymentIntent can replace this:
 # This class is used in order to track the lifecycle of the payment
 class Payment(models.Model):
     stripe_charge_id = models.CharField(max_length=52)
@@ -61,6 +61,7 @@ class OrderItem(models.Model):
 
 class Order(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
+    ref_code = models.CharField(max_length=16 )
     items = models.ManyToManyField(OrderItem)
     order_created = models.DateTimeField(auto_now_add=True)
     # TODO: Ordered_date should be set to day when ordered is set to True
@@ -69,7 +70,21 @@ class Order(models.Model):
     billing_address = models.ForeignKey('BillingAddress', on_delete=models.CASCADE, blank=True, null=True)
     payment = models.ForeignKey('Payment', on_delete=models.CASCADE, blank=True, null=True)
     coupon = models.ForeignKey('Coupon', on_delete=models.SET_NULL, blank=True, null=True)
+    received = models.BooleanField(default=False)
+    refund_requested = models.BooleanField(default=False)
+    refund_granted = models.BooleanField(default=False)
 
+    # TODO: 2. Next to Stripe indicate the Payment Method and create the
+    #  dj-stripe model object accordingly
+    #  3. Charge needs to be replaced by PaymentIntent
+    """
+    1. Item added to cart
+    2. Adding a billing address / indicate the payment method
+    3. Payment via Charge
+    4. Received (e.g. Ticket for Session)
+    5. Refunds
+
+    """
     def __str__(self):
         return self.user.username
 
@@ -102,5 +117,15 @@ class Coupon(models.Model):
 
     def __str__(self):
         return self.code
+
+
+class RefundRequest(models.Model):
+    order = models.ForeignKey(Order, on_delete=models.CASCADE)
+    reason = models.TextField()
+    accepted = models.BooleanField(default=False)
+    refund_email = models.EmailField()
+
+    def __str__(self):
+        return f"{self.pk}"
 
 

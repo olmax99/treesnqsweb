@@ -1,0 +1,32 @@
+{% extends "projects/base.html" %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+
+  <!--Main layout-->
+  <main>
+    <div class="container pt-5">
+      <!--Section: Projects v.3-->
+      <section class="text-left mb-4">
+        <div class="row wow fadeIn col-md-10 pt-5">
+          <div class="col-10 offset-2">
+          <hr>
+          <h2>Request Refund</h2>
+          <form method="POST">
+          {% csrf_token %}
+          {{ form|crispy }}
+          <button type="'submit" class="btn btn-outline-info">Submit</button>
+          </form>
+          </div>
+        </div>
+
+      <!--/.Projects Overview-->
+
+      </section>
+      <!--Section: Products v.3-->
+
+    </div>
+  </main>
+  <!--Main layout-->
+
+{% endblock content %}

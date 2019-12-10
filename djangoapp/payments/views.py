@@ -1,3 +1,7 @@
+import random
+import string
+
+from django.dispatch import receiver
 from django.http import response
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
@@ -7,9 +11,11 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import render, redirect
 from django.views import View
 # from djstripe.models import Charge
+from djstripe import webhooks
+from djstripe.signals import WEBHOOK_SIGNALS
 
-from payments.forms import CheckoutForm, CouponForm
-from payments.models import NewProject, OrderItem, Order, BillingAddress, Payment, Coupon
+from payments.forms import CheckoutForm, CouponForm, RefundForm
+from payments.models import NewProject, OrderItem, Order, BillingAddress, Payment, Coupon, RefundRequest
 
 import logging
 
@@ -18,6 +24,13 @@ import logging
 
 import stripe
 from stripe import error
+
+
+"""
+See all stripe webhook event types 
+https://stripe.com/docs/api/events/types
+
+"""
 
 logger = logging.getLogger(__name__)
 
@@ -30,6 +43,16 @@ def log_error(err):
 
 
 stripe.api_key = settings.STRIPE_TEST_SECRET_KEY
+
+
+@webhooks.handler("payment_intent.created")
+def charge_succeeded_hook(event, **kwargs):
+    logger.info(f"[dj-stripe]: PaymentIntent created - {event.type}")
+
+
+def order_reference():
+    return '-'.join([''.join(
+        random.choices(string.ascii_uppercase + string.digits, k=4)) for _ in range(4)])
 
 
 class PaymentView(LoginRequiredMixin, View):
@@ -62,7 +85,7 @@ class PaymentView(LoginRequiredMixin, View):
                 description="Charge from djangoapp@treesnqs.com"
             )
             # TODO: Can this model be replaced by dj-stripe model? Which one?
-            # STEP 2: Create the payment model for handling payment lifecycle later on
+            # STEP 2: Create the payment model for handling payment lifecycle
             payment = Payment()
             payment.stripe_charge_id = charge['id']
             payment.user = self.request.user
@@ -76,6 +99,7 @@ class PaymentView(LoginRequiredMixin, View):
             # STEP 4: Show that order is filled
             order.ordered = True
             order.payment = payment
+            order.ref_code = order_reference()
             order.save()
 
             # TODO: Implement PaymentIntent API and replace Charge
@@ -236,3 +260,38 @@ class AddCouponView(LoginRequiredMixin,View):
                 return redirect("order:checkout")
 
 
+class RequestRefundView(LoginRequiredMixin, View):
+    def get(self, *args, **kwargs):
+        form = RefundForm()
+        context = {
+            'form': form
+        }
+        return render(self.request, "payments/request-refund.html", context)
+
+    def post(self, *args, **kwargs):
+        form = RefundForm(self.request.POST or None)
+        if form.is_valid():
+            try:
+                ref_code = form.cleaned_data.get('ref_code')
+                message = form.cleaned_data.get('message')
+                contact = form.cleaned_data.get('refund_email')
+                # Step 1: Edit the order
+                try:
+                    order = Order.objects.get(ref_code=ref_code)
+                    order.refund_requested = True
+                    order.save()
+
+                    # Step 2: Store the refund
+                    refund = RefundRequest()
+                    refund.order = order
+                    refund.reason = message
+                    refund.refund_email = contact
+                    refund.save()
+                    messages.success(self.request, "We have received your request for refund.")
+                    return redirect("treesnqs-home")
+                except ObjectDoesNotExist:
+                    messages.info(self.request, "Could't find a matching Order.")
+                    return redirect("order:request-refund")
+            except ObjectDoesNotExist:
+                messages.info(self.request, "Ensure that the input is valid.Please try again.")
+                return redirect("order:request-refund")

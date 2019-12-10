@@ -26,7 +26,7 @@ makemigrations:
 	PYTHONPATH=$(pwd) python -m pipenv run python manage.py makemigrations --settings=app.settings.local
 
 .PHONY: migrate ## Migrate local Django sqlite3 db
-migrate:
+migrate: makemigrations
 	cd djangoapp/ && \
 	PYTHONPATH=$(pwd) python -m pipenv run python manage.py migrate --settings=app.settings.local	
 

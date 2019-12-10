@@ -66,7 +66,7 @@ DJANGOAPP_STRIPE_WEBHOOK_SECRET=<optional: from your local stripe cli>
 $ make runserver
 
 # LOCAL MIGRATIONS
-$ make makemigrations
+
 $ make migrate 
 
 ```
@@ -101,7 +101,7 @@ $ make charts
 
 ### Step 2: Initialize local helm repo
 
-Initialize the local repo for development:
+Initialize minikube for local development:
 ```
 $ minikube start --vm-driver kvm2 --memory 4096 --cpus 2 --disk-size='40000mb'
 
@@ -152,8 +152,8 @@ metadata:
 
 #### ii. Provide default values
 
-Create an gmail account and activate [https://support.google.com/accounts/answer/185833?hl=en](https://support.google.com/accounts/answer/185833?hl=en). Use
-the password in `djangoappEmailHostPassword`.
+Create an gmail account and activate [https://support.google.com/accounts/answer/185833?hl=en](https://support.google.com/accounts/answer/185833?hl=en) 
+custom app integration. Use the password in `djangoappEmailHostPassword`.
 
 Provide values for deploying `djangohelm`. This is an example for a development `values.yaml` file:
 ```
@@ -235,6 +235,14 @@ Open the Djangoapp via browser at `https://<minikube ip>:<Node Port>`
 
 **NOTE:** Performing migrations on newly created models during `skaffold dev` might fail. Always pause `skaffold dev`
 during new model creation.
+
+### Step 6: Create Djangoapp Superuser
+
+```
+$ kubectl exec -ti djangohelm-5fc4fc7b68-rkhnq -- /bin/bash -c \
+"cd .. && python manage.py createsuperuser --settings=app.settings.development"
+
+```
 
 ## FAQ
 
@@ -334,11 +342,23 @@ being used is always the top one indicated in `index.yaml`.
 
 ### iii. Stripe stuff
 
-- How can i debug webhooks?
+- How can webhooks be debugged?
 
-Install the stripe cli locally and run `stripe listen`.
+Install the stripe cli locally and run `stripe listen`. Then from the stripe cli you can trigger
+mock events: 
+
+  - `stripe trigger payment_intent.created`
+
+These mock events can be observed from the stripe cli directly via `stripe listen`. Further, they 
+can be forwarded to your local development environment via: 
+
+  - `stripe listen --forward-to localhost:8081/stripe/webhook/` (This url is provided by dj-stripe)
 
 **NOTE** That way you will alse receive a new webhook token, which can be used for local testing.
+
+- How to create a dj-stripe customer and sync it with Stripe? Is a customer needed for syncing 
+charges and ppayment_intents?
+
 
 
 ### Useful resources
