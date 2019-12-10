@@ -4,14 +4,31 @@ remote := https:\/\/raw.githubusercontent.com\/olmax99\/treesnqsweb\/master\/hel
 AWS_REGION := eu-central-1
 PROJECT_NAME := treesnqsweb-dev
 
+
 all: help
 
 .PHONY: help ## Help
 help:
 	@grep '^.PHONY:.*' Makefile | sed 's/\.PHONY:[ \t]\+\(.*\)[ \t]\+##[ \t]*\(.*\)/\1	\2/' | expand -t20
 
+.PHONY: templates ## Sync local data with AWS (s3 files and cloudformation)
 templates:
 	aws s3 cp --recursive media s3://${PROJECT_NAME}-djangoapp-mediastore-${AWS_REGION}
+
+.PHONY: runserver ## Run local Django development server
+runserver:
+	cd djangoapp/ && \
+	PYTHONPATH=$(pwd) python -m pipenv run python manage.py runserver 8081 --settings=app.settings.local
+
+.PHONY: makemigrations ## Make migrations for local Django sqlite3 db
+makemigrations:
+	cd djangoapp/ && \
+	PYTHONPATH=$(pwd) python -m pipenv run python manage.py makemigrations --settings=app.settings.local
+
+.PHONY: migrate ## Migrate local Django sqlite3 db
+migrate:
+	cd djangoapp/ && \
+	PYTHONPATH=$(pwd) python -m pipenv run python manage.py migrate --settings=app.settings.local	
 
 .PHONY: charts ## w/o make:   helm fetch --untar -d djangohelm/charts/ stable/postgresql
 charts:

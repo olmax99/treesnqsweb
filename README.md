@@ -25,10 +25,10 @@ For local development, the following components are required on the local machin
 
 ## Quickstart Development
 
-### [Optionally] Run local runserver only
+### [Optionally] Run local runserver
 
 Sometimes, for quick debugging or front-end tasks etc. it is faster to run the bare minimum
-Djangoapp.
+Djangoapp in **local Debug mode**.
 
 **NOTE:** Always try to avoid the local runserver and use minikube skaffold dev instead!!!
 
@@ -63,10 +63,11 @@ DJANGOAPP_STRIPE_WEBHOOK_SECRET=<optional: from your local stripe cli>
 #### Step 2: Run local runserver
 
 ```
-$ PYTHONPATH=$(pwd) python -m pipenv run python manage.py runserver 8081 --settings=app.settings.local
+$ make runserver
 
-$ PYTHONPATH=$(pwd) python -m pipenv run python manage.py makemigrations --settings=app.settings.local
-$ PYTHONPATH=$(pwd) python -m pipenv run python manage.py migrate --settings=app.settings.local
+# LOCAL MIGRATIONS
+$ make makemigrations
+$ make migrate 
 
 ```
 
@@ -238,9 +239,9 @@ during new model creation.
 ## FAQ
 
 
-### Helm/Skaffold
+### Kubernetes, Helm, Skaffold 
 
-- How to access the postgres Pod and postgresclient for querying the database?
+- How to access the postgres Pod and postgres client for querying the database manually?
 
 ```
 $ kubectl run djangohelm-postgresql-client --rm --tty -i --restart='Never' --namespace default --image docker.io/bitnami/postgresql:11.6.0-debian-9-r0 --env="PGPASSWORD=super_secret" --command -- psql --host djangohelm-postgresql -U postgres -d postgres -p 5432
@@ -252,11 +253,10 @@ $ kubectl run djangohelm-postgresql-client --rm --tty -i --restart='Never' --nam
 ```
 # BACKUP
 $ kubectl exec -ti djangohelm-postgresql-0 -- /bin/bash -c "pg_dump -U postgres djangoapp" > \
-/tmp/$(date +"%Y_%m_%d_%I_%M_%p")_djangoapp.bak
+/tmp/$(date +"%Y_%m_%d_%I_%M_%p")_psql_djangoapp.bak
 
 # RESTORE
-
-cat 2019_12_08_10_18_AM_djangoapp.bak | kubectl exec -i djangohelm-postgresql-0 -- /bin/bash \
+cat 2019_12_08_10_18_AM_psql_djangoapp.bak | kubectl exec -i djangohelm-postgresql-0 -- /bin/bash \
 -c "PGPASSWORD="super_secret" psql -U postgres -d djangoapp"
 
 

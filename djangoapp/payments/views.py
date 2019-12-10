@@ -1,3 +1,4 @@
+from django.http import response
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -34,10 +35,15 @@ stripe.api_key = settings.STRIPE_TEST_SECRET_KEY
 class PaymentView(LoginRequiredMixin, View):
     def get(self, *args, **kwargs):
         order = Order.objects.get(user=self.request.user, ordered=False)
-        context = {
-            'order': order
-        }
-        return render(self.request, "payments/payment.html", context)
+        if order.billing_address:
+            context = {
+                'order': order,
+                'DISPLAY_COUPON_FORM': False
+            }
+            return render(self.request, "payments/payment.html", context)
+        else:
+            messages.warning(self.request, "A billing address is required.")
+            return redirect("order:checkout")
 
     # TODO: Replace with dj-stripe models if possible
     # Requests are handled to go to https://js.stripe.com/v3/
@@ -86,21 +92,21 @@ class PaymentView(LoginRequiredMixin, View):
             # Since it's a decline, stripe.error.CardError will be caught
             body = e.json_body
             err = body.get('error', {})
-            messages.error(self.request, f"{err.get('message')}")
+            messages.warning(self.request, f"{err.get('message')}")
             log_error(err)
             return redirect('treesnqs-home')
         except stripe.error.RateLimitError as e:
             # Too many requests made to the API too quickly
             body = e.json_body
             err = body.get('error', {})
-            messages.error(self.request, "Rate error.")
+            messages.warning(self.request, "Rate error.")
             log_error(err)
             return redirect('treesnqs-home')
         except stripe.error.InvalidRequestError as e:
             # Invalid parameters were supplied to Stripe's API
             body = e.json_body
             err = body.get('error', {})
-            messages.error(self.request, "Invalid parameters.")
+            messages.warning(self.request, "Invalid parameters.")
             log_error(err)
             return redirect('treesnqs-home')
         except stripe.error.AuthenticationError as e:
@@ -108,14 +114,14 @@ class PaymentView(LoginRequiredMixin, View):
             # (maybe you changed API keys recently)
             body = e.json_body
             err = body.get('error', {})
-            messages.error(self.request, "Not authenticated.")
+            messages.warning(self.request, "Not authenticated.")
             log_error(err)
             return redirect('treesnqs-home')
         except stripe.error.APIConnectionError as e:
             # Network communication with Stripe failed
             body = e.json_body
             err = body.get('error', {})
-            messages.error(self.request, "Network error.")
+            messages.warning(self.request, "Network error.")
             log_error(err)
             return redirect('treesnqs-home')
         except stripe.error.StripeError as e:
@@ -123,12 +129,12 @@ class PaymentView(LoginRequiredMixin, View):
             # yourself an email
             body = e.json_body
             err = body.get('error', {})
-            messages.error(self.request, f"Something went wrong. You were not charged. Please try again.")
+            messages.warning(self.request, f"Something went wrong. You were not charged. Please try again.")
             log_error(err)
             return redirect('treesnqs-home')
         except Exception as e:
             # Send email to Admin
-            messages.error(
+            messages.warning(
                 self.request,
                 f"Something went wrong. We are notified and do our best to resolve the issue. Please try again later."
             )
@@ -144,7 +150,8 @@ class CheckoutView(LoginRequiredMixin, View):
             context = {
                 'form': form,
                 'couponform': CouponForm(),
-                'order': order
+                'order': order,
+                'DISPLAY_COUPON_FORM': True
             }
             return render(self.request, "payments/checkout-page.html", context)
         except ObjectDoesNotExist:
@@ -183,7 +190,7 @@ class CheckoutView(LoginRequiredMixin, View):
                     return render(self.request, 'payments/order-summary.html')
         except ObjectDoesNotExist:
             # logger.info(self.request.POST)
-            messages.error(self.request, "You don't have any Orders, yet.")
+            messages.warning(self.request, "You don't have any Orders, yet.")
             return redirect('treesnqs-home')
 
 
@@ -196,7 +203,7 @@ class OrderSummaryView(LoginRequiredMixin, View):
             }
             return render(self.request, 'payments/order-summary.html', context)
         except ObjectDoesNotExist:
-            messages.error(self.request, "You don't have any Orders, yet.")
+            messages.warning(self.request, "You don't have any Orders, yet.")
             return redirect('treesnqs-home')
 
 
@@ -210,21 +217,22 @@ def get_coupon(request, code):
         return redirect("order:checkout")
 
 
-@login_required
-def add_coupon(request):
-    if request.method == 'POST':
-        form = CouponForm(request.POST or None)
+class AddCouponView(LoginRequiredMixin,View):
+    def post(self, *args, **kwargs):
+        form = CouponForm(self.request.POST or None)
         if form.is_valid():
             try:
                 code = form.cleaned_data.get('code')
-                order = Order.objects.get(user=request.user, ordered=False)
-                order.coupon = get_coupon(request, code)
+                order = Order.objects.get(user=self.request.user, ordered=False)
+                res = get_coupon(self.request, code)
+                if type(res) is response.HttpResponseRedirect:
+                    return res
+                order.coupon = res
                 order.save()
-                messages.success(request, "Your coupon was successfully redeemed.")
+                messages.success(self.request, "Your coupon was successfully redeemed.")
                 return redirect("order:checkout")
             except ObjectDoesNotExist:
-                messages.info(request, "You do not have an active order.")
+                messages.info(self.request, "You do not have an active order.")
                 return redirect("order:checkout")
-    # TODO: Create readable error message
-    return None
+
 

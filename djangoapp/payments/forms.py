@@ -2,6 +2,17 @@ from django import forms
 from django_countries.fields import CountryField
 from django_countries.widgets import CountrySelectWidget
 
+
+"""
+NOTE: forms.Form Classes essentially translate to html <input ... > elements or
+      are used to directly replace values inside of them.
+      - Used as input for GET request on the current view, where the data is 
+        forwarded to another url via <form> element containing 
+        action="{% url "..."}" method="POST"
+      - Used as input for POST request on the current view directly replacing 
+        arguments in an existing <input > element
+"""
+
 PAYMENT_CHOICES = [
     ('S', 'Stripe')
 ]
@@ -26,6 +37,11 @@ class CheckoutForm(forms.Form):
 
 
 class CouponForm(forms.Form):
+    """
+    CouponForm represents the following html input element (go to order_snippet.html)
+    <input type="text" class="form-control" placeholder="Promo code" \
+     aria-label="Recipient's username" aria-describedby="basic-addon2"
+    """
     code = forms.CharField(widget=forms.TextInput(attrs={
         'class': 'form-control',
         'placeholder': 'Promo code',
