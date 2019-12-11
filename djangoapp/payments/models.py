@@ -75,7 +75,7 @@ class Order(models.Model):
 
     """
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    ref_code = models.CharField(max_length=16 )
+    ref_code = models.CharField(max_length=24)
     items = models.ManyToManyField(OrderItem)
     order_created = models.DateTimeField(auto_now_add=True)
     # TODO: Ordered_date should be set to day when ordered is set to True

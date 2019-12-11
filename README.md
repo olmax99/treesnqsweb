@@ -55,8 +55,7 @@ DJANGOAPP_STRIPE_LIVE_PUBLIC_KEY=""
 DJANGOAPP_STRIPE_LIVE_SECRET_KEY=""
 DJANGOAPP_STRIPE_TEST_PUBLIC_KEY=<from your stripe account>
 DJANGOAPP_STRIPE_TEST_SECRET_KEY=<from your stripe account>
-DJANGOAPP_STRIPE_WEBHOOK_SECRET=<optional: from your local stripe cli>
-
+DJANGOAPP_STRIPE_WEBHOOK_SECRET=<optional: from your local stripe cl
 
 ```
 
@@ -67,7 +66,10 @@ $ make runserver
 
 # LOCAL MIGRATIONS
 
-$ make migrate 
+$ make migrate
+
+$ cd djangoapp && PYTHONPATH=$(pwd) python -m pipenv run python manage.py \
+createsuperuser --settings=app.settings.local
 
 ```
 
@@ -385,11 +387,9 @@ charges and ppayment_intents?
 
 - User authentication with google [https://medium.com/trabe/oauth-authentication-in-django-with-social-auth-c67a002479c1](https://medium.com/trabe/oauth-authentication-in-django-with-social-auth-c67a002479c1)
 
-- Deploy a Lambda function that creates thumbnails from uploaded user profile pictures. (OR simply remove the upload functionality in the early version!!!)
-
 - Use EBS volume for PersistentVolumes, otherwise data will be lost if the cluster is being shut down
 
-- Implement Asynchronous Tasks: Replace Meinheld with Uvicorn for and install Channels [https://github.com/tiangolo/uvicorn-gunicorn-docker](https://github.com/tiangolo/uvicorn-gunicorn-docker), [https://www.uvicorn.org/](https://www.uvicorn.org/), [https://channels.readthedocs.io/en/latest/index.html](https://channels.readthedocs.io/en/latest/index.html)
+- DO NOT Implement asynchronous Tasks with Uvicorn and Channels [https://channels.readthedocs.io/en/latest/index.html](https://channels.readthedocs.io/en/latest/index.html), Channels still recommends Celery to use in Production.
 
 ## General Instructions
 
