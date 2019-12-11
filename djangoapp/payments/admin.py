@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from payments.models import OrderItem, Order, Payment, Coupon, RefundRequest
+from payments.models import OrderItem, Order, Payment, Coupon, RefundRequest, BillingAddress
 
 
 def accept_requested_refund(modeladmin, request, queryset):
@@ -52,7 +52,22 @@ class RefundRequestAdmin(admin.ModelAdmin):
     list_display = ['order', 'reason', 'accepted']
 
 
+class BillingAddressAdmin(admin.ModelAdmin):
+    list_display = ['user',
+                    'street_address',
+                    'apartment_address',
+                    'countries',
+                    'zip_code']
+    list_filter = ['countries']
+    search_fields = ['user',
+                     'street_address',
+                     'apartment_address',
+                     'zip_code']
+
+
 admin.site.register(OrderItem)
 admin.site.register(Order, OrderAdmin)
 admin.site.register(Payment)
 admin.site.register(Coupon, CouponAdmin)
+admin.site.register(RefundRequest, RefundRequestAdmin)
+admin.site.register(BillingAddress, BillingAddressAdmin)

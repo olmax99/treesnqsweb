@@ -10,7 +10,7 @@ from projects.models import NewProject
 #  See path/to/side-packages/djstripe/models
 
 
-# TODO: Evaluate if djstripe.models.core.PaymentIntent can replace this:
+# TODO: Evaluate if djstripe.models.core.PaymentIntent can replace this
 # This class is used in order to track the lifecycle of the payment
 class Payment(models.Model):
     stripe_charge_id = models.CharField(max_length=52)
@@ -22,6 +22,7 @@ class Payment(models.Model):
         return self.user.username
 
 
+# THIS IS PART OF THE CORE ORDER MODEL, AND NOT BE REPLACED
 class OrderItem(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     ordered = models.BooleanField(default=False)
@@ -59,7 +60,20 @@ class OrderItem(models.Model):
             return self.get_total_item_price()
 
 
+# THIS IS THE CORE MODEL, WHICH WILL LINK TO ALL DJSTRIPE MODELS
 class Order(models.Model):
+    # TODO: 2. Next to Stripe indicate the Payment Method and create the
+    #  dj-stripe model object accordingly
+    #  3. Charge needs to be replaced by PaymentIntent
+    """
+    Current lifecycle of the Order
+    1. Item added to cart
+    2. Adding a billing address / indicate the payment method / redeem coupon
+    3. Payment via Charge
+    4. Received (e.g. Ticket for Project)
+    5. Refunds
+
+    """
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     ref_code = models.CharField(max_length=16 )
     items = models.ManyToManyField(OrderItem)
@@ -74,17 +88,6 @@ class Order(models.Model):
     refund_requested = models.BooleanField(default=False)
     refund_granted = models.BooleanField(default=False)
 
-    # TODO: 2. Next to Stripe indicate the Payment Method and create the
-    #  dj-stripe model object accordingly
-    #  3. Charge needs to be replaced by PaymentIntent
-    """
-    1. Item added to cart
-    2. Adding a billing address / indicate the payment method
-    3. Payment via Charge
-    4. Received (e.g. Ticket for Session)
-    5. Refunds
-
-    """
     def __str__(self):
         return self.user.username
 
@@ -98,6 +101,7 @@ class Order(models.Model):
         return total
 
 
+# TODO: Verify if can be replaced by path/to/site-packages/djstripe/models/core.Customer
 class BillingAddress(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     street_address = models.CharField(max_length=64)

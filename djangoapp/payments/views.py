@@ -1,6 +1,8 @@
 import random
 import string
 
+from django.contrib.auth.models import User
+from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.http import response
 from django.conf import settings
@@ -12,6 +14,7 @@ from django.shortcuts import render, redirect
 from django.views import View
 # from djstripe.models import Charge
 from djstripe import webhooks
+from djstripe.models import Customer
 from djstripe.signals import WEBHOOK_SIGNALS
 
 from payments.forms import CheckoutForm, CouponForm, RefundForm
@@ -25,7 +28,6 @@ import logging
 import stripe
 from stripe import error
 
-
 """
 See all stripe webhook event types 
 https://stripe.com/docs/api/events/types
@@ -33,6 +35,25 @@ https://stripe.com/docs/api/events/types
 """
 
 logger = logging.getLogger(__name__)
+
+
+# TODO: Verify how this process can be integrated into path/to/site-packages/djstripe/models/checkout.Session
+"""
+CURRENT CHECKOUT LIFECYCLE (NEW: DJSTRIPE):
+
+0. User is registered and logged in
+   NEW:
+     - create Customer
+1. User fills his cart in OrderSummaryView -> proceeds to checkout
+2. In CheckoutView user provides address and payment provider. He can optionally redeem a coupon -> proceeds to payment
+   NEW:
+     - collects Session data (see djstripe checkout model)
+3. User provides credit card credentials -> submit transaction
+   NEW:
+     - creates PaymentIntent
+4. Option for refund
+
+"""
 
 
 def log_error(err):
@@ -48,6 +69,21 @@ stripe.api_key = settings.STRIPE_TEST_SECRET_KEY
 @webhooks.handler("payment_intent.created")
 def charge_succeeded_hook(event, **kwargs):
     logger.info(f"[dj-stripe]: PaymentIntent created - {event.type}")
+
+
+# --------------- User Creation Signal for Customer object creation-----------------
+
+# Every new user profile triggers the related customer object creation
+def customer_receiver(sender, instance, created, *args, **kwargs):
+    if created:
+        customer = Customer.objects.get_or_create(subscriber=instance)
+        logger.info(f"[dj-stripe]: Customer created - {instance}")
+
+
+# Utilize post_save signal when User is created
+post_save.connect(customer_receiver, sender=User)
+
+# ---------------------------------------------------------------------------------
 
 
 def order_reference():
@@ -73,7 +109,23 @@ class PaymentView(LoginRequiredMixin, View):
     # noinspection PyBroadException
     def post(self, *args, **kwargs):
         order = Order.objects.get(user=self.request.user, ordered=False)
+        # TODO: What is the relationship between sbscriber and User?
+        # customer_profile = Customer.objects.get(subsciber=)
+
+        # Token used to be for one-time payments, which are not working with PaymentIntents
+        # CUSTOMER OBJECT ALWAYS REQUIRED
         token = self.request.POST.get('stripeToken')
+
+        # TODO: Implement PaymentIntent API and replace Charge
+        # returns client secret, which is used for the entire payment process lifecycle
+        # intent = stripe.PaymentIntent.create(
+        #     amount=1099,
+        #     currency='chf',
+        #     payment_method_types=["card"]
+        # )
+
+        # ----------------- Legacy Stripe Charge API-----------------------------------
+
         amount = int(order.get_total() * 100)
         try:
             # Use Stripe's library to make requests...
@@ -101,14 +153,6 @@ class PaymentView(LoginRequiredMixin, View):
             order.payment = payment
             order.ref_code = order_reference()
             order.save()
-
-            # TODO: Implement PaymentIntent API and replace Charge
-            # returns client secret, which is used for the entire payment process lifecycle
-            # intent = stripe.PaymentIntent.create(
-            #     amount=1099,
-            #     currency='chf',
-            #     payment_method_types=["card"]
-            # )
 
             messages.success(self.request, "Your order was successful.")
             return redirect('treesnqs-home')
