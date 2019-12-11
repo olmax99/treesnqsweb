@@ -50,7 +50,7 @@ LOGGING = {
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': 'djangoapp_debug.sqlite3',
+        'NAME': 'db.sqlite3',
     }
 }
 
@@ -64,4 +64,6 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = '/media/'
+
+STRIPE_LIVE_MODE = False
 

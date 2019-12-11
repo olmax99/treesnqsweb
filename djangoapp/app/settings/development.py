@@ -70,3 +70,5 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 MEDIA_URL = '/opt/media/'
 MEDIA_ROOT = '/opt/media/'
+
+STRIPE_LIVE_MODE = False

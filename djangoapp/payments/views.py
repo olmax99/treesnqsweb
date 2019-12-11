@@ -3,7 +3,6 @@ import string
 
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
-from django.dispatch import receiver
 from django.http import response
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
@@ -12,13 +11,11 @@ from django.contrib import messages
 from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import render, redirect
 from django.views import View
-# from djstripe.models import Charge
 from djstripe import webhooks
-from djstripe.models import Customer
-from djstripe.signals import WEBHOOK_SIGNALS
+from djstripe.sync import sync_subscriber
 
 from payments.forms import CheckoutForm, CouponForm, RefundForm
-from payments.models import NewProject, OrderItem, Order, BillingAddress, Payment, Coupon, RefundRequest
+from payments.models import Order, BillingAddress, Payment, Coupon, RefundRequest
 
 import logging
 
@@ -43,7 +40,7 @@ CURRENT CHECKOUT LIFECYCLE (NEW: DJSTRIPE):
 
 0. User is registered and logged in
    NEW:
-     - create Customer
+     - create Customer (Django Signals)
 1. User fills his cart in OrderSummaryView -> proceeds to checkout
 2. In CheckoutView user provides address and payment provider. He can optionally redeem a coupon -> proceeds to payment
    NEW:
@@ -76,8 +73,8 @@ def charge_succeeded_hook(event, **kwargs):
 # Every new user profile triggers the related customer object creation
 def customer_receiver(sender, instance, created, *args, **kwargs):
     if created:
-        customer = Customer.objects.get_or_create(subscriber=instance)
-        logger.info(f"[dj-stripe]: Customer created - {instance}")
+        customer = sync_subscriber(subscriber=instance)
+        logger.info(f"[dj-stripe]: Customer created locally - {customer}")
 
 
 # Utilize post_save signal when User is created
