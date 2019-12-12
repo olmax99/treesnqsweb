@@ -65,5 +65,17 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = '/media/'
 
+
+# Stripe Payments
+# https://dashboard.stripe.com/test/dashboard
+
+# Publishable Key pk_test_5fmmEWu1gFayFdYFmctskmcX006YNB5lQl
+STRIPE_LIVE_PUBLIC_KEY = os.environ["DJANGOAPP_STRIPE_LIVE_PUBLIC_KEY"]
+STRIPE_LIVE_SECRET_KEY = os.environ["DJANGOAPP_STRIPE_LIVE_SECRET_KEY"]
+STRIPE_TEST_PUBLIC_KEY = os.environ["DJANGOAPP_STRIPE_TEST_PUBLIC_KEY"]
+STRIPE_TEST_SECRET_KEY = os.environ["DJANGOAPP_STRIPE_TEST_SECRET_KEY"]
+DJSTRIPE_WEBHOOK_SECRET = os.environ["DJANGOAPP_DJSTRIPE_WEBHOOK_SECRET"]
+# TODO: Move to k8s ConfigMap object
+# Change to True in production
 STRIPE_LIVE_MODE = False
 

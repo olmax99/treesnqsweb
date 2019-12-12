@@ -12,7 +12,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import render, redirect
 from django.views import View
 from djstripe import webhooks
-from djstripe.models import Customer
+from djstripe.models import Customer, PaymentIntent
 from djstripe.sync import sync_subscriber
 
 from payments.forms import CheckoutForm, CouponForm, RefundForm
@@ -37,6 +37,9 @@ logger = logging.getLogger(__name__)
 
 # TODO: Verify how this process can be integrated into path/to/site-packages/djstripe/models/checkout.Session
 """
+STRIPE: We recommend creating a PaymentIntent as soon as the amount is known, 
+        such as when the customer begins the checkout process.
+
 CURRENT CHECKOUT LIFECYCLE (NEW: DJSTRIPE):
 
 0. User is registered and logged in
@@ -44,12 +47,16 @@ CURRENT CHECKOUT LIFECYCLE (NEW: DJSTRIPE):
      - create Customer (Django Signals)
 1. User fills his cart in OrderSummaryView -> proceeds to checkout
    NEW:
-     - create new session 
+     - create PaymentIntent
+     - create new session ???
 2. In CheckoutView user provides address and payment provider. He can optionally redeem a coupon -> proceeds to payment
    NEW:
-     - collects Session data (see djstripe checkout model)
+     - create PaymentMethods object
+     - create source object ???
+     - collects Session data (see djstripe checkout model) ???
 3. User provides credit card credentials -> submit transaction
    NEW:
+     - collect source object data from credit card credentials
      - creates PaymentIntent
 4. Option for refund
 
@@ -66,9 +73,9 @@ def log_error(err):
 stripe.api_key = settings.STRIPE_TEST_SECRET_KEY
 
 
-@webhooks.handler("payment_intent.created")
-def charge_succeeded_hook(event, **kwargs):
-    logger.info(f"[dj-stripe]: PaymentIntent created - {event.type}")
+@webhooks.handler("payment_intent")
+def payment_intent_hook(event, **kwargs):
+    logger.info(f"[dj-stripe: hook]: PaymentIntent - {event.type}")
 
 
 # --------------- User Creation Signal for Customer object creation-----------------
@@ -117,14 +124,6 @@ class PaymentView(LoginRequiredMixin, View):
         # Token used to be for one-time payments, which are not working with PaymentIntents
         # CUSTOMER OBJECT ALWAYS REQUIRED
         token = self.request.POST.get('stripeToken')
-
-        # TODO: Implement PaymentIntent API and replace Charge
-        # returns client secret, which is used for the entire payment process lifecycle
-        # intent = stripe.PaymentIntent.create(
-        #     amount=1099,
-        #     currency='chf',
-        #     payment_method_types=["card"]
-        # )
 
         # ----------------- Legacy Stripe Charge API-----------------------------------
 
@@ -270,7 +269,26 @@ class OrderSummaryView(LoginRequiredMixin, View):
     def get(self, *args, **kwargs):
         try:
             customer_qs = Customer.objects.filter(subscriber=self.request.user)
+            payment_intent_qs = PaymentIntent.objects.filter(customer=customer_qs[0])
             order = Order.objects.get(customer=customer_qs[0], ordered=False)
+            # STEP 1: Create new PaymentIntent or update amount of existing
+            if payment_intent_qs.exists():
+                amount_updated = order.get_total()
+                payment_intent = PaymentIntent.objects.get(customer=customer_qs[0])
+                if amount_updated != payment_intent.amount:
+                    # logger.info(f"['dj-stripe'] captured payment_intent: {payment_intent}")
+                    payment_intent.amount = amount_updated
+                    payment_intent.update(sid=payment_intent_qs[0].id,
+                                          amount=int(amount_updated*100))
+                    payment_intent.save()
+            else:
+                # hook to Stripe client will trigger sync
+                payment_intent_stripe = stripe.PaymentIntent.create(
+                    customer=customer_qs[0].id,
+                    amount=int(order.get_total()*100),
+                    currency="chf")
+                # logger.info(f"['order:order-summary'] NEW PaymentIntent : {payment_intent_stripe.id}")
+            # STEP 2: Show Order Summary
             context = {
                 'object': order
             }
@@ -290,7 +308,7 @@ def get_coupon(request, code):
         return redirect("order:checkout")
 
 
-class AddCouponView(LoginRequiredMixin,View):
+class AddCouponView(LoginRequiredMixin, View):
     def post(self, *args, **kwargs):
         form = CouponForm(self.request.POST or None)
         if form.is_valid():

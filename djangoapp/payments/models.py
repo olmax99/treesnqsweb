@@ -2,7 +2,7 @@ from django.contrib.auth.models import User
 from django.db import models
 from django_countries.fields import CountryField
 
-from djstripe.models import Charge, Customer
+from djstripe.models import Charge, Customer, PaymentIntent
 from projects.models import NewProject
 
 
@@ -83,6 +83,7 @@ class Order(models.Model):
     ordered_date = models.DateTimeField()
     ordered = models.BooleanField(default=False)
     billing_address = models.ForeignKey('BillingAddress', on_delete=models.CASCADE, blank=True, null=True)
+    payment_intent = models.ForeignKey(PaymentIntent, on_delete=models.CASCADE, blank=True, null=True)
     payment = models.ForeignKey('Payment', on_delete=models.CASCADE, blank=True, null=True)
     coupon = models.ForeignKey('Coupon', on_delete=models.SET_NULL, blank=True, null=True)
     received = models.BooleanField(default=False)
