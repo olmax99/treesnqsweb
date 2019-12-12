@@ -1,5 +1,6 @@
 from django import template
 from django.core.exceptions import ObjectDoesNotExist
+from djstripe.models import Customer
 
 from payments.models import Order
 
@@ -19,7 +20,8 @@ def cart_item_count(user):
     #     except ObjectDoesNotExist:
     #         return 0
     if user.is_authenticated:
-        qs = Order.objects.filter(user=user, ordered=False)
-        if qs.exists():
-            return qs[0].items.count()
+        customer_qs = Customer.objects.filter(subscriber=user)
+        order_qs = Order.objects.filter(customer=customer_qs[0], ordered=False)
+        if order_qs.exists():
+            return order_qs[0].items.count()
     return 0

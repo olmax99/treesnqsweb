@@ -2,7 +2,7 @@ from django.contrib.auth.models import User
 from django.db import models
 from django_countries.fields import CountryField
 
-from djstripe.models import Charge
+from djstripe.models import Charge, Customer
 from projects.models import NewProject
 
 
@@ -74,7 +74,8 @@ class Order(models.Model):
     5. Refunds
 
     """
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
+    # ref_code will be replaced by session.client_reference_id
     ref_code = models.CharField(max_length=24)
     items = models.ManyToManyField(OrderItem)
     order_created = models.DateTimeField(auto_now_add=True)
@@ -89,7 +90,7 @@ class Order(models.Model):
     refund_granted = models.BooleanField(default=False)
 
     def __str__(self):
-        return self.user.username
+        return f"Order by {self.customer.id}"
 
     def get_total(self):
         # lazy total calculation

@@ -17,7 +17,7 @@ django-storages = "*"
 dj-stripe = "*"
 django-countries = "*"
 python-decouple = "*"
-django = "*"
+django = "==2.2.8"
 
 [requires]
 python_version = "3.8"

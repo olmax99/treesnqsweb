@@ -3,6 +3,10 @@ from django.contrib import admin
 from payments.models import OrderItem, Order, Payment, Coupon, RefundRequest, BillingAddress
 
 
+
+
+
+
 def accept_requested_refund(modeladmin, request, queryset):
     queryset.update(refund_requested=False, refund_granted=True)
 
@@ -11,8 +15,14 @@ accept_requested_refund.short_description = 'Update orders to refund granted'
 
 
 class OrderAdmin(admin.ModelAdmin):
+    def get_customer_id(self, obj):
+        return obj.customer.id
+
+    get_customer_id.short_description = 'Customer'
+    get_customer_id.admin_order_field = 'customer__id'
+
     list_display = [
-        'user',
+        'get_customer_id',
         'ordered',
         'order_created',
         'ordered_date',
@@ -32,13 +42,13 @@ class OrderAdmin(admin.ModelAdmin):
         'refund_granted'
     ]
     list_display_links = [
-        'user',
+        'get_customer_id',
         'billing_address',
         'payment',
         'coupon'
     ]
     search_fields = [
-        'user__username',
+        'customer__id',
         'ref_code'
     ]
     actions = [accept_requested_refund]

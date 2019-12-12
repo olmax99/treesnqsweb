@@ -12,6 +12,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import render, redirect
 from django.views import View
 from djstripe import webhooks
+from djstripe.models import Customer
 from djstripe.sync import sync_subscriber
 
 from payments.forms import CheckoutForm, CouponForm, RefundForm
@@ -42,6 +43,8 @@ CURRENT CHECKOUT LIFECYCLE (NEW: DJSTRIPE):
    NEW:
      - create Customer (Django Signals)
 1. User fills his cart in OrderSummaryView -> proceeds to checkout
+   NEW:
+     - create new session 
 2. In CheckoutView user provides address and payment provider. He can optionally redeem a coupon -> proceeds to payment
    NEW:
      - collects Session data (see djstripe checkout model)
@@ -90,7 +93,8 @@ def order_reference():
 
 class PaymentView(LoginRequiredMixin, View):
     def get(self, *args, **kwargs):
-        order = Order.objects.get(user=self.request.user, ordered=False)
+        customer_qs = Customer.objects.filter(subscriber=self.request.user)
+        order = Order.objects.get(customer=customer_qs[0], ordered=False)
         if order.billing_address:
             context = {
                 'order': order,
@@ -105,7 +109,8 @@ class PaymentView(LoginRequiredMixin, View):
     # Requests are handled to go to https://js.stripe.com/v3/
     # noinspection PyBroadException
     def post(self, *args, **kwargs):
-        order = Order.objects.get(user=self.request.user, ordered=False)
+        customer_qs = Customer.objects.filter(subscriber=self.request.user)
+        order = Order.objects.get(customer=customer_qs[0], ordered=False)
         # TODO: What is the relationship between sbscriber and User?
         # customer_profile = Customer.objects.get(subsciber=)
 
@@ -210,7 +215,8 @@ class PaymentView(LoginRequiredMixin, View):
 class CheckoutView(LoginRequiredMixin, View):
     def get(self, *args, **kwargs):
         try:
-            order = Order.objects.get(user=self.request.user, ordered=False)
+            customer_qs = Customer.objects.filter(subscriber=self.request.user)
+            order = Order.objects.get(customer=customer_qs[0], ordered=False)
             form = CheckoutForm()
             context = {
                 'form': form,
@@ -225,7 +231,8 @@ class CheckoutView(LoginRequiredMixin, View):
     def post(self, *args, **kwargs):
         form = CheckoutForm(self.request.POST or None)
         try:
-            order = Order.objects.get(user=self.request.user, ordered=False)
+            customer_qs = Customer.objects.filter(subscriber=self.request.user)
+            order = Order.objects.get(customer=customer_qs[0], ordered=False)
             if form.is_valid():
                 street_address = form.cleaned_data.get('street_address')
                 apartment_address = form.cleaned_data.get('apartment_address')
@@ -262,7 +269,8 @@ class CheckoutView(LoginRequiredMixin, View):
 class OrderSummaryView(LoginRequiredMixin, View):
     def get(self, *args, **kwargs):
         try:
-            order = Order.objects.get(user=self.request.user, ordered=False)
+            customer_qs = Customer.objects.filter(subscriber=self.request.user)
+            order = Order.objects.get(customer=customer_qs[0], ordered=False)
             context = {
                 'object': order
             }
