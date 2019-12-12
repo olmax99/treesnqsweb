@@ -14,6 +14,7 @@ from django.views import View
 from djstripe import webhooks
 from djstripe.models import Customer, PaymentIntent
 from djstripe.sync import sync_subscriber
+from djstripe.models import PaymentMethod
 
 from payments.forms import CheckoutForm, CouponForm, RefundForm
 from payments.models import Order, BillingAddress, Payment, Coupon, RefundRequest
@@ -51,7 +52,7 @@ CURRENT CHECKOUT LIFECYCLE (NEW: DJSTRIPE):
      - create new session ???
 2. In CheckoutView user provides address and payment provider. He can optionally redeem a coupon -> proceeds to payment
    NEW:
-     - create PaymentMethods object
+     - create PaymentMethods object and attach it to PaymentIntent
      - create source object ???
      - collects Session data (see djstripe checkout model) ???
 3. User provides credit card credentials -> submit transaction
@@ -76,6 +77,11 @@ stripe.api_key = settings.STRIPE_TEST_SECRET_KEY
 @webhooks.handler("payment_intent")
 def payment_intent_hook(event, **kwargs):
     logger.info(f"[dj-stripe: hook]: PaymentIntent - {event.type}")
+
+
+@webhooks.handler("payment_method")
+def payment_method_hook(event, **kwargs):
+    logger.info(f"[dj-stripe: hook]: PaymentMethod - {event.type}")
 
 
 # --------------- User Creation Signal for Customer object creation-----------------
@@ -118,7 +124,7 @@ class PaymentView(LoginRequiredMixin, View):
     def post(self, *args, **kwargs):
         customer_qs = Customer.objects.filter(subscriber=self.request.user)
         order = Order.objects.get(customer=customer_qs[0], ordered=False)
-        # TODO: What is the relationship between sbscriber and User?
+        # TODO: What is the relationship between subscriber and User?
         # customer_profile = Customer.objects.get(subsciber=)
 
         # Token used to be for one-time payments, which are not working with PaymentIntents
@@ -239,7 +245,6 @@ class CheckoutView(LoginRequiredMixin, View):
                 zip_code = form.cleaned_data.get('zip_code')
                 # TODO: Add save_info functionality
                 # save_info = form.cleaned_data.get('save_info')
-                payment_option = form.cleaned_data.get('payment_option')
                 billing_address = BillingAddress(
                     user=self.request.user,
                     street_address=street_address,
@@ -252,7 +257,20 @@ class CheckoutView(LoginRequiredMixin, View):
                 order.save()
                 # logger.info(form.cleaned_data)
                 # logger.info("The form is valid.")
+                payment_option = form.cleaned_data.get('payment_option')
+                payment_method = form.cleaned_data.get('payment_method')
                 if payment_option == 'S':
+                    if payment_method == 'card':
+                        payment_method_stripe = stripe.PaymentMethod.create(
+                            type="card",
+                            card={"number": "4242424242424242",
+                                  "exp_month": 12,
+                                  "exp_year": 2020,
+                                  "cvc": "314",
+                                  },)
+                        logger.info(f"[order:checkout] paymentMethod created: {payment_method_stripe}")
+                        payment_method = PaymentMethod.attach(payment_method_stripe,
+                                                              customer_qs[0])
                     return redirect('order:payment', pay_option='stripe')
                 # elif payment_option == 'P':
                 #     return redirect('order:payment', pay_option='paypal')

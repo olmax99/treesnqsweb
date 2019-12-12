@@ -14,7 +14,14 @@ NOTE: forms.Form Classes essentially translate to html <input ... > elements or
 """
 
 PAYMENT_CHOICES = [
-    ('S', 'Stripe')
+    ('S', 'Stripe'),
+    # ('P', 'PayPal')
+]
+
+PAYMENT_TYPES = [
+    ('card', 'Card'),
+    # ('ideal', 'Ideal'),
+    # ('sepa', 'Sepa Debit')
 ]
 
 
@@ -34,6 +41,7 @@ class CheckoutForm(forms.Form):
     }))
     save_info = forms.BooleanField(required=False)
     payment_option = forms.ChoiceField(widget=forms.RadioSelect, choices=PAYMENT_CHOICES)
+    payment_method = forms.ChoiceField(widget=forms.RadioSelect, choices=PAYMENT_TYPES)
 
 
 class CouponForm(forms.Form):
