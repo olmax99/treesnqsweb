@@ -1,9 +1,11 @@
+import json
 import random
 import string
 
 from django.contrib.auth.models import User
+from django.core import serializers
 from django.db.models.signals import post_save
-from django.http import response
+from django.http import response, HttpResponse, JsonResponse
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -18,6 +20,9 @@ from djstripe.models import PaymentMethod
 
 from payments.forms import CheckoutForm, CouponForm, RefundForm
 from payments.models import Order, BillingAddress, Payment, Coupon, RefundRequest
+
+from django.views.decorators.csrf import csrf_exempt
+from django.utils.decorators import method_decorator
 
 import logging
 
@@ -40,6 +45,9 @@ logger = logging.getLogger(__name__)
 """
 STRIPE: We recommend creating a PaymentIntent as soon as the amount is known, 
         such as when the customer begins the checkout process.
+        
+        DO NOT USE STRIPE.JS CHECKOUT - the credit card form will do, bc PaymentIntents
+        are set up already
 
 CURRENT CHECKOUT LIFECYCLE (NEW: DJSTRIPE):
 
@@ -51,14 +59,9 @@ CURRENT CHECKOUT LIFECYCLE (NEW: DJSTRIPE):
      - create PaymentIntent
      - create new session ???
 2. In CheckoutView user provides address and payment provider. He can optionally redeem a coupon -> proceeds to payment
-   NEW:
-     - create PaymentMethods object and attach it to PaymentIntent
-     - create source object ???
-     - collects Session data (see djstripe checkout model) ???
 3. User provides credit card credentials -> submit transaction
    NEW:
-     - collect source object data from credit card credentials
-     - creates PaymentIntent
+     - fetch PaymentIntent from 
 4. Option for refund
 
 """
@@ -102,6 +105,42 @@ post_save.connect(customer_receiver, sender=User)
 def order_reference():
     return '-'.join([''.join(
         random.choices(string.ascii_uppercase + string.digits, k=4)) for _ in range(4)])
+
+
+@method_decorator(csrf_exempt, name='dispatch')
+class RetrievePaymentIntentView(View):
+    def post(self, *args, **kwargs):
+        try:
+            # Retrieve payment intent
+            customer_qs = Customer.objects.filter(subscriber=self.request.user)
+            payment_intent = PaymentIntent.objects.get(customer=customer_qs[0])
+            # EXPECTED OUTPUT
+            out = {
+                "clientSecret": payment_intent.client_secret,
+                "publishableKey": settings.STRIPE_TEST_PUBLIC_KEY
+            }
+            return JsonResponse(out)
+        except ObjectDoesNotExist:
+            # logger.info(self.request.POST)
+            messages.warning(self.request, "There are no OrderItems associated with this checkout.")
+            return redirect('treesnqs-home')
+
+
+@method_decorator(csrf_exempt, name='dispatch')
+class NewPaymentView(LoginRequiredMixin, View):
+    def get(self, *args, **kwargs):
+        customer_qs = Customer.objects.filter(subscriber=self.request.user)
+        # payment_intent = PaymentIntent.objects.get(customer=customer_qs[0])
+        order = Order.objects.get(customer=customer_qs[0], ordered=False)
+        if order.billing_address:
+            context = {
+                'order': order,
+                'DISPLAY_COUPON_FORM': False
+            }
+            return render(self.request, "payments/payment_new.html", context)
+        else:
+            messages.warning(self.request, "A billing address is required.")
+            return redirect("order:checkout")
 
 
 class PaymentView(LoginRequiredMixin, View):
@@ -261,6 +300,7 @@ class CheckoutView(LoginRequiredMixin, View):
                 payment_method = form.cleaned_data.get('payment_method')
                 if payment_option == 'S':
                     if payment_method == 'card':
+                        # TODO: This needs to go into PaymentView JavaScript
                         payment_method_stripe = stripe.PaymentMethod.create(
                             type="card",
                             card={"number": "4242424242424242",
@@ -305,6 +345,7 @@ class OrderSummaryView(LoginRequiredMixin, View):
                     customer=customer_qs[0].id,
                     amount=int(order.get_total()*100),
                     currency="chf")
+                order.payment_intent_created = payment_intent_stripe
                 # logger.info(f"['order:order-summary'] NEW PaymentIntent : {payment_intent_stripe.id}")
             # STEP 2: Show Order Summary
             context = {
@@ -314,16 +355,6 @@ class OrderSummaryView(LoginRequiredMixin, View):
         except ObjectDoesNotExist:
             messages.warning(self.request, "You don't have any Orders, yet.")
             return redirect('treesnqs-home')
-
-
-@login_required
-def get_coupon(request, code):
-    try:
-        coupon = Coupon.objects.get(code=code)
-        return coupon
-    except ObjectDoesNotExist:
-        messages.info(request, "This coupon does not exist.")
-        return redirect("order:checkout")
 
 
 class AddCouponView(LoginRequiredMixin, View):

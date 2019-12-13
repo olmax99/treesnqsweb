@@ -31,6 +31,7 @@ class OrderAdmin(admin.ModelAdmin):
         'refund_granted',
         'billing_address',
         'payment',
+        'payment_intent',
         'coupon'
     ]
     list_filter = [
