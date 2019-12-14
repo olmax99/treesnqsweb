@@ -1,7 +1,7 @@
 from django.urls import path
 
 from payments.views import CheckoutView, OrderSummaryView, AddCouponView, RequestRefundView, \
-    PaymentView, RetrievePaymentIntentView, payment_intent_succeeded_view
+    PaymentView, RetrievePaymentIntentView
 
 # Needed for include(... namespace=...)
 app_name = 'order'
@@ -13,6 +13,5 @@ urlpatterns = [
     path('payment/<pay_option>/', PaymentView.as_view(), name='payment'),
     path('add-coupon/', AddCouponView.as_view(), name='add-coupon'),
     path('refund/request/', RequestRefundView.as_view(), name='request-refund'),
-    path('create-payment-intent/', RetrievePaymentIntentView.as_view(), name='get-payment-intent'),
-    path('payment-intent-succeeded', payment_intent_succeeded_view, name='payment-intent-succeeded')
+    path('create-payment-intent/', RetrievePaymentIntentView.as_view(), name='get-payment-intent')
 ]

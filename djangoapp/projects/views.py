@@ -47,10 +47,14 @@ def add_to_cart(request, pk):
         order = order_query_set[0]
         # check if order_item is already in the order
         if order.items.filter(item__id=project.id).exists():
-            order_item.quantity += 1
-            order_item.save()
-            messages.info(request, "The quantity was updated.")
-            return redirect('order:order-summary')
+            if order_item.quantity < 3:
+                order_item.quantity += 1
+                order_item.save()
+                messages.info(request, "The quantity was updated.")
+                return redirect('order:order-summary')
+            else:
+                messages.info(request, "You've reached the maximum per purchase.")
+                return redirect('order:order-summary')
         else:
             order.items.add(order_item)
             messages.info(request, "This item was added to your cart.")
@@ -108,10 +112,10 @@ def remove_single_item_from_cart(request, pk):
                 # Identify active PaymentIntent and cancel
                 customer_qs = Customer.objects.filter(subscriber=request.user)
                 payment_intent_qs = PaymentIntent.objects.filter(customer=customer_qs[0]).exclude(
-                    status='succeded').exclude(status='canceled')
+                    status='succeeded').exclude(status='canceled')
                 if payment_intent_qs.exists():
+                    # logging.info(f"['remove_single_item_from_cart'] select PaymentIntent to cancel: {payment_intent_qs}")
                     payment_intent = payment_intent_qs.get(customer=customer_qs[0])
-                    logging.info(f"['remove_single_item_from_cart'] select PaymentIntent to cancel: {payment_intent}")
                     stripe_data = stripe.PaymentIntent.cancel(payment_intent.id,)
                     PaymentIntent.sync_from_stripe_data(stripe_data)
                 # Remove OrderItem object locally

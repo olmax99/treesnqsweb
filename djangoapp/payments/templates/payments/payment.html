@@ -7,40 +7,6 @@
     <link  href="{% static 'css/normalize.css' %}" rel="stylesheet">
     <link  href="{% static 'css/global.css' %}" rel="stylesheet">
 
-    <style>
-    #submit {
-      font-family: "Helvetica Neue", Helvetica, sans-serif;
-      font-size: 16px;
-      font-variant: normal;
-      padding: 0;
-      margin: 0;
-      -webkit-font-smoothing: antialiased;
-    }
-
-    #button-text {
-      border: none;
-      border-radius: 4px;
-      outline: none;
-      text-decoration: none;
-      color: #fff;
-      background: #32325d;
-      white-space: nowrap;
-      display: inline-block;
-      height: 40px;
-      line-height: 40px;
-      padding: 0 14px;
-      box-shadow: 0 4px 6px rgba(50, 50, 93, .11), 0 1px 3px rgba(0, 0, 0, .08);
-      font-size: 15px;
-      font-weight: 600;
-      letter-spacing: 0.025em;
-      -webkit-transition: all 150ms ease;
-      transition: all 150ms ease;
-      float: left;
-      width: 100%
-    }
-
-    </style>
-
 {% endblock extra_head %}
 {% block content %}
 
@@ -52,41 +18,31 @@
           <!-- Heading -->
           <hr>
           <h2>Payment</h2>
-
           <!--Grid row-->
           <div class="row row fadeIn pt-5">
-
             <!--Grid column-->
             <div class="col-md-10 mb-4 offset-1">
-
-{#                <div class="sr-root">#}
-{#                  <div class="sr-main">#}
-                    <script src="https://js.stripe.com/v3/"></script>
-                    <form id="payment-form" class="sr-payment-form">{% csrf_token %}
-                      <div class="sr-combo-inputs-row">
-                        <div class="sr-input sr-card-element" id="card-element"></div>
-                      </div>
-                      <div class="sr-field-error" id="card-errors" role="alert"></div>
-                      <button id="submit">
-                        <div class="spinner hidden" id="spinner"></div>
-                        <span id="button-text">Submit Payment</span><span id="order-amount"></span>
-                      </button>
-                    </form>
-                    <div class="sr-result hidden">
-                      <p>Payment completed<br /></p>
-{#                      <pre>#}
-{#                        <code></code>#}
-{#                      </pre>#}
-                    </div>
-{#                  </div>#}
-{#                </div>#}
-
-            </div>
-
+                <script src="https://js.stripe.com/v3/"></script>
+                <form id="payment-form" class="sr-payment-form">{% csrf_token %}
+                  <div class="sr-combo-inputs-row">
+                    <div class="sr-input sr-card-element" id="card-element"></div>
+                  </div>
+                  <div class="sr-field-error" id="card-errors" role="alert"></div>
+                  <button id="submit">
+                    <div class="spinner hidden" id="spinner"></div>
+                    <span id="button-text">Submit Payment</span><span id="order-amount"></span>
+                  </button>
+                </form>
+                <div class="sr-result hidden">
+                  <p>Payment completed<br /></p>
+                  <pre>
+                      <h5></h5>
+                  </pre>
+                </div>
+           </div>
             <div class="col-md-10 mb-4 offset-1">
               {% include "payments/order_snippet.html" %}
             </div>
-
           </div>
           </section>
         </div>
@@ -215,10 +171,11 @@
     var orderComplete = function(clientSecret) {
       stripe.retrievePaymentIntent(clientSecret).then(function(result) {
         var paymentIntent = result.paymentIntent;
-        var paymentIntentJson = JSON.stringify(paymentIntent, null, 2);
+        {#var paymentIntentJson = JSON.stringify(paymentIntent, null, 2);#}
 
         document.querySelector(".sr-payment-form").classList.add("hidden");
-        document.querySelector(".pre").textContent = paymentIntentJson;
+        {#document.querySelector("pre").textContent = paymentIntentJson;#}
+        {#document.querySelector("pre").textContent = "";#}
 
         document.querySelector(".sr-result").classList.remove("hidden");
         setTimeout(function() {
