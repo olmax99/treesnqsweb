@@ -1,7 +1,7 @@
 <!-- Heading -->
 <h4 class="d-flex justify-content-between align-items-center mb-3">
 <span class="text-muted">Your cart</span>
-<span class="badge badge-secondary badge-pill">3</span>
+{#<span class="badge badge-info badge-pill">3</span>#}
 </h4>
 
 <!-- Cart -->
@@ -39,7 +39,7 @@
     {#  <input type="text" class="form-control" placeholder="Promo code" aria-label="Recipient's username" aria-describedby="basic-addon2">#}
     {{ couponform.code }}
     <div class="input-group-append">
-      <button class="btn btn-secondary btn-md waves-effect m-0" type="submit">Redeem</button>
+      <button class="btn btn-secondary btn-md waves-effect m-0" type="stripeBtn">Redeem</button>
     </div>
   </div>
 </form>

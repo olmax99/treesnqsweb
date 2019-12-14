@@ -73,6 +73,13 @@ createsuperuser --settings=app.settings.local
 
 ```
 
+**NOTE:** For testing webhooks and event response endpoints activate stripe cli:
+
+```
+$ stripe listen --forward-to localhost:8081/stripe/webhook/
+
+```
+
 ### Packages
 
 To use this repository as a k8s charts repository for deploying the Djangoapp, configure helm:

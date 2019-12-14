@@ -1,12 +1,13 @@
 import logging
 
+import stripe
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, get_object_or_404, redirect
 from django.utils import timezone
 from django.views.generic import ListView, DetailView
 from django.contrib.auth.mixins import LoginRequiredMixin
-from djstripe.models import Customer
+from djstripe.models import Customer, PaymentIntent
 
 from payments.models import OrderItem, Order
 from projects.models import NewProject
@@ -104,6 +105,16 @@ def remove_single_item_from_cart(request, pk):
                 order_item.quantity -= 1
                 order_item.save()
             else:
+                # Identify active PaymentIntent and cancel
+                customer_qs = Customer.objects.filter(subscriber=request.user)
+                payment_intent_qs = PaymentIntent.objects.filter(customer=customer_qs[0]).exclude(
+                    status='succeded').exclude(status='canceled')
+                if payment_intent_qs.exists():
+                    payment_intent = payment_intent_qs.get(customer=customer_qs[0])
+                    logging.info(f"['remove_single_item_from_cart'] select PaymentIntent to cancel: {payment_intent}")
+                    stripe_data = stripe.PaymentIntent.cancel(payment_intent.id,)
+                    PaymentIntent.sync_from_stripe_data(stripe_data)
+                # Remove OrderItem object locally
                 OrderItem.objects.filter(
                     item=project,
                     user=request.user,
