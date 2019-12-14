@@ -25,15 +25,17 @@ For local development, the following components are required on the local machin
 
 ## Quickstart Development
 
-### [Optionally] Run local runserver
+There are two options for running the development environment. Firstly, you can use the built-in
+Django runserver. Secondly, you can develop in Kubernetes on Minikube. For latter there is a 
+development tool called *Skaffold* which detects changes and redeploys automatically.
+
+### Option 1: Local Runserver
 
 Sometimes, for quick debugging or front-end tasks etc. it is faster to run the bare minimum
 Djangoapp in **local Debug mode**.
 
 **NOTE:** Always try to avoid the local runserver and use minikube skaffold dev instead!!!
 
-Use PYTHONPATH for manual Django manage.py tasks, e.g. reach the built-in Django server in
-ditectory `djangoapp/` via:
 
 #### Step 1: Local environment variables
 
@@ -80,7 +82,9 @@ $ stripe listen --forward-to localhost:8081/stripe/webhook/
 
 ```
 
-### Packages
+### Option 2: Minikube
+
+#### Step 1: Prepare Helm Repo
 
 To use this repository as a k8s charts repository for deploying the Djangoapp, configure helm:
 
@@ -96,19 +100,19 @@ treesnqsweb     https://raw.githubusercontent.com/olmax99/treesnqsweb/master/hel
 
 ```
 
-### S3 Media Files
+#### Step 2: Deploy Media Files S3 Bucket
 
 In order to use S3 Storage for Media files create a new Dev User and Group in the AWS console.
 Download the programmatic access credentials and insert them into `djangohelm/values.yml`.
 
-### Step 1: Fetch subcharts
+#### Step 3: Fetch Helm subcharts
 
 ```
 $ make charts
 
 ```
 
-### Step 2: Initialize local helm repo
+#### Step 4: Initialize Minkikube
 
 Initialize minikube for local development:
 ```
@@ -131,9 +135,9 @@ $ docker build -t djangoapp:0.2 ./djangoapp
 
 ```
 
-### Step 3: Prepare helm deployment
+#### Step 5: Prepare for the Helm Deployment
 
-#### i. Create password secrets
+##### i. Create password secrets
 
 It is best practise to NOT version secrets and manually remove them after the Helm deployment.
 
@@ -159,7 +163,7 @@ metadata:
 ```
 
 
-#### ii. Provide default values
+##### ii. Provide default values
 
 Create an gmail account and activate [https://support.google.com/accounts/answer/185833?hl=en](https://support.google.com/accounts/answer/185833?hl=en) 
 custom app integration. Use the password in `djangoappEmailHostPassword`.
@@ -223,11 +227,11 @@ postgresql:
 
 **NOTE:** The host name of the database is `localhost` by default unless the external database option is activated.
 
-#### iii. Create Python Requirements
+##### iii. Create Python Requirements
 
 In `treesnqsweb/djangoapp` run: `pipenv lock -r > requirements.txt`
 
-### Step 5: Run in development mode
+#### Step 6: Run in development mode
 
 ```
 $ make dev
@@ -242,10 +246,8 @@ $ kubectl get all
 
 Open the Djangoapp via browser at `https://<minikube ip>:<Node Port>`
 
-**NOTE:** Performing migrations on newly created models during `skaffold dev` might fail. Always pause `skaffold dev`
-during new model creation.
 
-### Step 6: Create Djangoapp Superuser
+#### Step 7: Create Djangoapp Superuser
 
 ```
 $ kubectl exec -ti djangohelm-5fc4fc7b68-rkhnq -- /bin/bash -c \
@@ -253,10 +255,47 @@ $ kubectl exec -ti djangohelm-5fc4fc7b68-rkhnq -- /bin/bash -c \
 
 ```
 
+## General Instructions
+
+### i. Static Files
+
+The static files are being served using [http://whitenoise.evans.io/en/stable/](http://whitenoise.evans.io/en/stable/) middleware for simplified
+in-docker wsgi static file serving.
+
+```
+MIDDLEWARE = [
+    'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
+
+STATIC_URL = '/opt/static/'
+STATIC_ROOT = '/opt/static/'
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+```
+
+This will automatically create a folder `/opt/static`:
+```
+/opt/static/
+├── admin           <-- Default static files from /usr/local/lib/python3.8/site-packages/django/contrib/admin/static
+│   ├── css
+│   ├── fonts
+│   ├── img
+│   └── js
+├── staticfiles.json
+└── trees                       <-- created from custom Django app incl. directory /djangoapp/<custom_app>/static/<custom_app>
+    ├── images
+    ├── style.279196452539.css
+    └── style.css
+
+```
+
+
 ## FAQ
 
+A number of questions I answered myself during the development process.
 
-### Kubernetes, Helm, Skaffold 
+
+### i. Kubernetes, Helm, Skaffold 
 
 - How to access the postgres Pod and postgres client for querying the database manually?
 
@@ -265,7 +304,7 @@ $ kubectl run djangohelm-postgresql-client --rm --tty -i --restart='Never' --nam
 
 ```
 
-- How to create an local backup from current postgres and how restore it?
+- How to create a local backup from current postgres and how to restore it?
 
 ```
 # BACKUP
@@ -280,7 +319,7 @@ cat 2019_12_08_10_18_AM_psql_djangoapp.bak | kubectl exec -i djangohelm-postgres
 ```
 
 
-- What is the directory the actual data is written to?
+- Into which local directory is the actual data written to?
 
 ```
 $ kubectl get pv
@@ -298,10 +337,10 @@ $ sudo qemu-img info <image_name>
 Currently, the only option seems to stop, delete, and restart Minikube. All data will be lost. 
 <-- Try: Delete PV manually, and restart djangohelm 
 
-- How to configure the connection credentials and pass them on from main Chart?
+- How to configure the postgres connection credentials and pass them on from main Chart?
 
 The main chart `values.yaml` file contains the appropriate subchart sections, which start according to the subcharts'
-dependeny name. E.g.
+dependency name. E.g.
 ```
 ...
 postgresql:
@@ -343,9 +382,9 @@ being used is always the top one indicated in `index.yaml`.
 3. Build the image inside Minikube: `docker build -t <imag_name> .`
 4. In Deployments, set `.Values.pullPolicy: Never`
 
-### Django
+### ii. Django
 
-- How do signals work and what is the connection to djstrip webhooks?
+- How do signals work and what is the connection to dj-stripe webhooks?
 
 
 
@@ -380,6 +419,7 @@ charges and ppayment_intents?
 
 - [https://helm.sh/docs/intro/getting\_started/](https://helm.sh/docs/intro/getting_started/)
 
+
 ## Where to go from here?
 
 - Create a minimum cost cluster using kops and spot instances:
@@ -396,41 +436,8 @@ charges and ppayment_intents?
 
 - Use EBS volume for PersistentVolumes, otherwise data will be lost if the cluster is being shut down
 
-- DO NOT Implement asynchronous Tasks with Uvicorn and Channels [https://channels.readthedocs.io/en/latest/index.html](https://channels.readthedocs.io/en/latest/index.html), Channels still recommends Celery to use in Production.
-
-## General Instructions
-
-### i. Static Files
-
-The static files are being served using [http://whitenoise.evans.io/en/stable/](http://whitenoise.evans.io/en/stable/) middleware for simplified
-in-docker wsgi static file serving.
-
-```
-MIDDLEWARE = [
-    'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',
-
-STATIC_URL = '/opt/static/'
-STATIC_ROOT = '/opt/static/'
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
-
-```
-
-This will automatically create a folder `/opt/static`:
-```
-/opt/static/
-├── admin           <-- Default static files from /usr/local/lib/python3.8/site-packages/django/contrib/admin/static
-│   ├── css
-│   ├── fonts
-│   ├── img
-│   └── js
-├── staticfiles.json
-└── trees                       <-- created from custom Django app incl. directory /djangoapp/<custom_app>/static/<custom_app>
-    ├── images
-    ├── style.279196452539.css
-    └── style.css
-
-```
+- DO NOT Implement asynchronous Tasks with Uvicorn and Channels [https://channels.readthedocs.io/en/latest/index.html](https://channels.readthedocs.io/en/latest/index.html), Channels still recommends Celery to use in Production for background tasks. 
+It is only meant for websockets. 
 
 
 
