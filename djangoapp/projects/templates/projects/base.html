@@ -46,50 +46,66 @@
         height: 100vh;
       }
     }
-
   </style>
+  <script>
+    function logout() {
+      var url = "{% url 'logout' %}";
+      $.get(
+        url,
+        function (data) {
+          $('#popup').html('<div style="visibility: visible; width: 100vw; height: 100vh; display: flex; flex-direction: column; position: fixed; float: none; z-index: 999; background-color: #0008;'
+          +'justify-content: center; align-items: center;"> <div style="display: flex; flex-direction: column; justify-content: center; align-items: center; width: 80vw; height: 20vh;'
+          +'border-radius: 0.5rem; background-color: #000b; color: #888;" onclick="refresh()"><a>Logout Success.</a></div></div>');
+        }
+      );
+    }
+
+    function refresh() {
+      location.reload();
+    }
+  </script>
 </head>
 
 <body>
+  <div>
+    <!-- Navbar -->
+    <nav class="navbar fixed-top navbar-expand-lg navbar-light white scrolling-navbar">
+      <div class="container">
 
-  <!-- Navbar -->
-  <nav class="navbar fixed-top navbar-expand-lg navbar-light white scrolling-navbar">
-    <div class="container">
+        <!-- Brand -->
+        <a class="navbar-brand waves-effect" href="{% url 'treesnqs-home' %}">
+          <strong class="blue-text">Trees N' Qs</strong>
+        </a>
 
-      <!-- Brand -->
-      <a class="navbar-brand waves-effect" href="{% url 'treesnqs-home' %}" target="_blank">
-        <strong class="blue-text">Trees N' Qs</strong>
-      </a>
+        <!-- Collapse -->
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+          aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
 
-      <!-- Collapse -->
-      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
-        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
+        <!-- Links -->
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
 
-      <!-- Links -->
-      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <!-- Left -->
+          <ul class="navbar-nav mr-auto">
+            <li class="nav-item">
+              <a class="nav-link waves-effect" href="{% url 'treesnqs-about' %}">About</a>
+            </li>
+          </ul>
 
-        <!-- Left -->
-        <ul class="navbar-nav mr-auto">
-          <li class="nav-item">
-            <a class="nav-link waves-effect" href="{% url 'treesnqs-about' %}" target="_blank">About</a>
-          </li>
-        </ul>
-
-        <!-- Right -->
-        <ul class="navbar-nav nav-flex-icons">
+          <!-- Right -->
+          <ul class="navbar-nav nav-flex-icons">
             {% if user.is_authenticated %}
             <li class="nav-item mr-3">
-            {% if user.profile.member %}
+              {% if user.profile.member %}
               <span class="badge green z-depth-1 mr-1"> Member </span>
               <small class="navbar-text">Hello,{{ user.get_username }}</small>
-            {% elif user.profile.nonprofit %}
+              {% elif user.profile.nonprofit %}
               <span class="badge green z-depth-1 mr-1"> Nonprofit </span>
               <small class="navbar-text">Hello,{{ user.get_username }}</small>
-            {% else %}
+              {% else %}
               <small class="navbar-text">Hello,{{ user.get_username }}</small>
-            {% endif %}
+              {% endif %}
             </li>
             <li class="nav-item">
               <a class="nav-link waves-effect" href="{% url 'order:order-summary' %}">
@@ -102,66 +118,74 @@
               <a class="nav-item nav-link" href="{% url 'profile' %}">Profile</a>
             </li>
             <li class="nav-item">
-              <a class="nav-item nav-link" href="{% url 'logout' %}">Logout</a>
+              <!-- <a class="nav-item nav-link" href="{% url 'logout' %}">Logout</a> -->
+              <a class="nav-item nav-link" onclick="logout()">Logout</a>
             </li>
-          {% else %}
+            {% else %}
             <li class="nav-item">
               <a class="nav-item nav-link" href="{% url 'login' %}">Login</a>
             </li>
             <li class="nav-item">
               <a class="nav-item nav-link" href="{% url 'register' %}">Register</a>
             </li>
-          {% endif %}
-        </ul>
+            {% endif %}
+          </ul>
+
+        </div>
 
       </div>
+    </nav>
+    <!-- Navbar -->
 
+    <div id="popup">
+      <!-- <div style="visibility: visible; width: 100vw; height: 100vh; display: flex; flex-direction: column; position: fixed; float: none; z-index: 999; background-color: #0008;
+          justify-content: center; align-items: center;"> <div style="display: flex; flex-direction: column; justify-content: center; align-items: center; width: 80vw; height: 20vh;
+          border-radius: 0.5rem; background-color: #000b; color: #888;" onclick="refresh()">Logout Success.</div></div> -->
     </div>
-  </nav>
-  <!-- Navbar -->
-
-  <!--Main layout-->
-  <main role="main" class="container-fluid no-padding">
+    
+    <!--Main layout-->
+    <main role="main" class="container-fluid no-padding" id="main" style="margin-bottom: 10rem;">
       <div class="row">
         <div class="col-md-12">
           {% if messages %}
-            <div class="mt-5 pt-4">
-              {% for message in messages %}
-                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-                  {{ message }}
-                  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                  </button>
-                </div>
-              {% endfor %}
+          <div class="mt-5 pt-4">
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+              {{ message }}
+              <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
             </div>
+            {% endfor %}
+          </div>
           {% endif %}
           {% block content %}{% endblock %}
         </div>
       </div>
-  </main>
-  <!--Main layout-->
+    </main>
+    <!--Main layout-->
 
-  <!--Footer-->
-  <footer class="page-footer text-center font-small mt-4 wow fadeIn">
+    <!--Footer-->
+    <footer class="page-footer text-center font-small mt-4 wow fadeIn" style="position: fixed;
+    width: 100vw;">
 
-    <!--Call to action-->
-    <div class="pt-4">
-      <a class="btn btn-outline-white" href="https://mdbootstrap.com/docs/jquery/getting-started/download/" target="_blank"
-        role="button">Download MDB
-        <i class="fas fa-download ml-2"></i>
-      </a>
-      <a class="btn btn-outline-white" href="https://mdbootstrap.com/education/bootstrap/" target="_blank" role="button">Start
-        free tutorial
-        <i class="fas fa-graduation-cap ml-2"></i>
-      </a>
-    </div>
-    <!--/.Call to action-->
+      <!--Call to action-->
+      <div style="padding-top: 1.5rem; padding-bottom: 1.5rem">
+        <a class="btn btn-outline-white" href="https://mdbootstrap.com/docs/jquery/getting-started/download/"
+          target="_blank" role="button">Download MDB
+          <i class="fas fa-download ml-2"></i>
+        </a>
+        <a class="btn btn-outline-white" href="https://mdbootstrap.com/education/bootstrap/" role="button">Start
+          free tutorial
+          <i class="fas fa-graduation-cap ml-2"></i>
+        </a>
+      </div>
+      <!--/.Call to action-->
 
-    <hr class="my-4">
+      <!-- <hr class="my-4"> -->
 
-    <!-- Social icons -->
-    <div class="pb-4">
+      <!-- Social icons -->
+      <!-- <div class="pb-4">
       <a href="https://www.facebook.com/mdbootstrap" target="_blank">
         <i class="fab fa-facebook-f mr-3"></i>
       </a>
@@ -193,18 +217,19 @@
       <a href="http://codepen.io/mdbootstrap/" target="_blank">
         <i class="fab fa-codepen mr-3"></i>
       </a>
-    </div>
-    <!-- Social icons -->
+    </div> -->
+      <!-- Social icons -->
 
-    <!--Copyright-->
-    <div class="footer-copyright py-3">
-      © 2019 Copyright:
-      <a href="https://mdbootstrap.com/education/bootstrap/" target="_blank"> MDBootstrap.com </a>
-    </div>
-    <!--/.Copyright-->
+      <!--Copyright-->
+      <div class="footer-copyright py-3">
+        © 2019 Copyright:
+        <a href="https://mdbootstrap.com/education/bootstrap/" target="_blank"> MDBootstrap.com </a>
+      </div>
+      <!--/.Copyright-->
 
-  </footer>
-  <!--/.Footer-->
+    </footer>
+    <!--/.Footer-->
+  </div>
 
   <!-- SCRIPTS -->
   <!-- JQuery -->
@@ -219,6 +244,10 @@
   <script type="text/javascript">
     // Animations initialization
     new WOW().init();
+    var mainHeight = $('#main').width();
+    console.log("mainHeight: " + mainHeight);
+    var windowHeight = $(window).height();
+    console.log("windowHeight: " + windowHeight);
 
   </script>
 </body>
