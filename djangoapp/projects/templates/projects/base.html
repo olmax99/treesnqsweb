@@ -27,6 +27,14 @@
       height: 60vh;
     }
 
+    .footerFixed {
+      position: fixed;
+    }
+
+    .topMenu:hover {
+      box-shadow: 0 4px 6px rgba(50, 50, 93, .11), 0 1px 3px rgba(0, 0, 0, .08);
+    }
+
     @media (max-width: 740px) {
 
       html,
@@ -54,8 +62,8 @@
         url,
         function (data) {
           $('#popup').html('<div style="visibility: visible; width: 100vw; height: 100vh; display: flex; flex-direction: column; position: fixed; float: none; z-index: 999; background-color: #0008;'
-          +'justify-content: center; align-items: center;"> <div style="display: flex; flex-direction: column; justify-content: center; align-items: center; width: 80vw; height: 20vh;'
-          +'border-radius: 0.5rem; background-color: #000b; color: #888;" onclick="refresh()"><a>Logout Success.</a></div></div>');
+            + 'justify-content: center; align-items: center;"> <div style="display: flex; flex-direction: column; justify-content: center; align-items: center; width: 80vw; height: 20vh;'
+            + 'border-radius: 0.5rem; background-color: #000b; color: #888;" onclick="refresh()"><a>Logout Success.</a></div></div>');
         }
       );
     }
@@ -66,14 +74,19 @@
   </script>
 </head>
 
-<body>
+<body style="background: linear-gradient(217deg, #afa, rgba(255,0,0,0) 70.71%),
+linear-gradient(127deg, #b5b9cc, rgba(0,255,0,0) 70.71%),
+linear-gradient(336deg, rgba(140, 0, 255, 0.2), rgba(140, 0, 255, 0) 70.71%);
+margin: 0;
+    background-repeat: no-repeat;
+    background-attachment: fixed;">
   <div>
     <!-- Navbar -->
     <nav class="navbar fixed-top navbar-expand-lg navbar-light white scrolling-navbar">
       <div class="container">
 
         <!-- Brand -->
-        <a class="navbar-brand waves-effect" href="{% url 'treesnqs-home' %}">
+        <a class="navbar-brand waves-effect topMenu" href="{% url 'treesnqs-home' %}" style="padding-left: 10px; padding-right: 10px;">
           <strong class="blue-text">Trees N' Qs</strong>
         </a>
 
@@ -89,7 +102,7 @@
           <!-- Left -->
           <ul class="navbar-nav mr-auto">
             <li class="nav-item">
-              <a class="nav-link waves-effect" href="{% url 'treesnqs-about' %}">About</a>
+              <a class="nav-link waves-effect topMenu" href="{% url 'treesnqs-about' %}">About</a>
             </li>
           </ul>
 
@@ -118,15 +131,14 @@
               <a class="nav-item nav-link" href="{% url 'profile' %}">Profile</a>
             </li>
             <li class="nav-item">
-              <!-- <a class="nav-item nav-link" href="{% url 'logout' %}">Logout</a> -->
               <a class="nav-item nav-link" onclick="logout()">Logout</a>
             </li>
             {% else %}
             <li class="nav-item">
-              <a class="nav-item nav-link" href="{% url 'login' %}">Login</a>
+              <a class="nav-item nav-link topMenu" href="{% url 'login' %}">Login</a>
             </li>
             <li class="nav-item">
-              <a class="nav-item nav-link" href="{% url 'register' %}">Register</a>
+              <a class="nav-item nav-link topMenu" href="{% url 'register' %}">Register</a>
             </li>
             {% endif %}
           </ul>
@@ -138,13 +150,27 @@
     <!-- Navbar -->
 
     <div id="popup">
-      <!-- <div style="visibility: visible; width: 100vw; height: 100vh; display: flex; flex-direction: column; position: fixed; float: none; z-index: 999; background-color: #0008;
-          justify-content: center; align-items: center;"> <div style="display: flex; flex-direction: column; justify-content: center; align-items: center; width: 80vw; height: 20vh;
-          border-radius: 0.5rem; background-color: #000b; color: #888;" onclick="refresh()">Logout Success.</div></div> -->
+      
     </div>
-    
+
     <!--Main layout-->
     <main role="main" class="container-fluid no-padding" id="main" style="margin-bottom: 10rem;">
+      <div style="position: absolute;
+      width: 100vw;
+      height: 100px;">
+        <div style="float: right;
+        margin-top: 20px;
+        width: 20vw;
+        height: 200px;
+        background-color: #333;
+        border: solid 1vw #333;
+        border-color: transparent transparent #333 transparent;
+        border-radius: 0 0 240px 50%/160px;
+        ">
+
+        </div>
+
+      </div>
       <div class="row">
         <div class="col-md-12">
           {% if messages %}
@@ -166,8 +192,7 @@
     <!--Main layout-->
 
     <!--Footer-->
-    <footer class="page-footer text-center font-small mt-4 wow fadeIn" style="position: fixed;
-    width: 100vw;">
+    <footer id="footer" class="page-footer text-center font-small mt-4 wow fadeIn footerFixed" style="width: 100vw;">
 
       <!--Call to action-->
       <div style="padding-top: 1.5rem; padding-bottom: 1.5rem">
@@ -242,12 +267,31 @@
   <script type="text/javascript" src="{% static 'js/mdb.min.js' %}"></script>
   <!-- Initializations -->
   <script type="text/javascript">
+
+    function heightCompare() {
+      var mainHeight = $('#main').height();
+      console.log("mainHeight: " + mainHeight);
+      var windowHeight = $(window).height();
+      console.log("windowHeight: " + windowHeight);
+
+      if (mainHeight > windowHeight) {
+        if ($("#footer").hasClass("footerFixed")) {
+          $("#footer").removeClass("footerFixed");
+        }
+      } else {
+        if (!$("#footer").hasClass("footerFixed")) {
+          $("#footer").addClass("footerFixed");
+        }
+      }
+    }
     // Animations initialization
     new WOW().init();
-    var mainHeight = $('#main').width();
-    console.log("mainHeight: " + mainHeight);
-    var windowHeight = $(window).height();
-    console.log("windowHeight: " + windowHeight);
+
+    heightCompare();
+
+    window.addEventListener("resize", () => {
+      heightCompare();
+    });
 
   </script>
 </body>
