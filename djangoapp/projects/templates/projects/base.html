@@ -19,6 +19,22 @@
   <link href="{% static 'css/mdb.min.css' %}" rel="stylesheet">
   <!-- Your custom styles (optional) -->
   <link href="{% static 'css/style.min.css' %}" rel="stylesheet">
+
+  <!-- Freelancer Theme -->
+  <!-- Font Awesome Icons -->
+  <link href="{% static 'vendor/fontawesome-free/css/all.min.css' %}" rel="stylesheet" type="text/css">
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css?family=Merriweather+Sans:400,700" rel="stylesheet">
+  <link href='https://fonts.googleapis.com/css?family=Merriweather:400,300,300italic,400italic,700,700italic'
+    rel='stylesheet' type='text/css'>
+
+  <!-- Plugin CSS -->
+  <link href="{% static 'vendor/magnific-popup/magnific-popup.css' %}" rel="stylesheet">
+
+  <!-- Theme CSS - Includes Bootstrap -->
+  <link href="{% static 'css/creative.min.css' %}" rel="stylesheet">
+  <!-- <link href="{% static 'css/jbstyle.css' %}" rel="stylesheet"> -->
   <style type="text/css">
     html,
     body,
@@ -80,13 +96,16 @@ linear-gradient(336deg, rgba(140, 0, 255, 0.2), rgba(140, 0, 255, 0) 70.71%);
 margin: 0;
     background-repeat: no-repeat;
     background-attachment: fixed;">
+<!-- <body style="background-color: #14151622;"> -->
+  
   <div>
     <!-- Navbar -->
     <nav class="navbar fixed-top navbar-expand-lg navbar-light white scrolling-navbar">
       <div class="container">
 
         <!-- Brand -->
-        <a class="navbar-brand waves-effect topMenu" href="{% url 'treesnqs-home' %}" style="padding-left: 10px; padding-right: 10px;">
+        <a class="navbar-brand waves-effect topMenu" href="{% url 'treesnqs-home' %}"
+          style="padding-left: 10px; padding-right: 10px;">
           <strong class="blue-text">Trees N' Qs</strong>
         </a>
 
@@ -150,11 +169,12 @@ margin: 0;
     <!-- Navbar -->
 
     <div id="popup">
-      
+
     </div>
 
     <!--Main layout-->
-    <main role="main" class="container-fluid no-padding" id="main" style="margin-bottom: 10rem;">
+    <main role="main" class="container-fluid no-padding" id="main"
+      style="margin-bottom: 10rem; padding-left: 0;">
       <div style="position: absolute;
       width: 100vw;
       height: 100px;">
@@ -169,8 +189,22 @@ margin: 0;
         ">
 
         </div>
+      </div>
+      <div style="position: absolute;
+      opacity: 0.2;
+      filter: alpha(opacity=20);
+      display: flex;
+      flex-direction: column;
+      justify-content: center; align-items: center;">
+        <img src="{% static 'bg-masthead.jpg' %}" style="
+        width: 100vw;
+        
+        " />
+        <div style="flex: 1;
+        background-color: #14151622;"></div>
 
       </div>
+
       <div class="row">
         <div class="col-md-12">
           {% if messages %}
@@ -196,54 +230,16 @@ margin: 0;
 
       <!--Call to action-->
       <div style="padding-top: 1.5rem; padding-bottom: 1.5rem">
-        <a class="btn btn-outline-white" href="https://mdbootstrap.com/docs/jquery/getting-started/download/"
+        <a class="btn btn-outline-dark" href="https://mdbootstrap.com/docs/jquery/getting-started/download/"
           target="_blank" role="button">Download MDB
           <i class="fas fa-download ml-2"></i>
         </a>
-        <a class="btn btn-outline-white" href="https://mdbootstrap.com/education/bootstrap/" role="button">Start
+        <a class="btn btn-outline-dark" href="https://mdbootstrap.com/education/bootstrap/" role="button">Start
           free tutorial
           <i class="fas fa-graduation-cap ml-2"></i>
         </a>
       </div>
       <!--/.Call to action-->
-
-      <!-- <hr class="my-4"> -->
-
-      <!-- Social icons -->
-      <!-- <div class="pb-4">
-      <a href="https://www.facebook.com/mdbootstrap" target="_blank">
-        <i class="fab fa-facebook-f mr-3"></i>
-      </a>
-
-      <a href="https://twitter.com/MDBootstrap" target="_blank">
-        <i class="fab fa-twitter mr-3"></i>
-      </a>
-
-      <a href="https://www.youtube.com/watch?v=7MUISDJ5ZZ4" target="_blank">
-        <i class="fab fa-youtube mr-3"></i>
-      </a>
-
-      <a href="https://plus.google.com/u/0/b/107863090883699620484" target="_blank">
-        <i class="fab fa-google-plus-g mr-3"></i>
-      </a>
-
-      <a href="https://dribbble.com/mdbootstrap" target="_blank">
-        <i class="fab fa-dribbble mr-3"></i>
-      </a>
-
-      <a href="https://pinterest.com/mdbootstrap" target="_blank">
-        <i class="fab fa-pinterest mr-3"></i>
-      </a>
-
-      <a href="https://github.com/mdbootstrap/bootstrap-material-design" target="_blank">
-        <i class="fab fa-github mr-3"></i>
-      </a>
-
-      <a href="http://codepen.io/mdbootstrap/" target="_blank">
-        <i class="fab fa-codepen mr-3"></i>
-      </a>
-    </div> -->
-      <!-- Social icons -->
 
       <!--Copyright-->
       <div class="footer-copyright py-3">
