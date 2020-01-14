@@ -51,6 +51,15 @@
       box-shadow: 0 4px 6px rgba(50, 50, 93, .11), 0 1px 3px rgba(0, 0, 0, .08);
     }
 
+    .customBg {
+      background: linear-gradient(217deg, #afa, rgba(255, 0, 0, 0) 70.71%),
+        linear-gradient(127deg, #b5b9cc, rgba(0, 255, 0, 0) 70.71%),
+        linear-gradient(336deg, rgba(140, 0, 255, 0.2), rgba(140, 0, 255, 0) 70.71%);
+      margin: 0;
+      background-repeat: no-repeat;
+      background-attachment: fixed;
+    }
+
     @media (max-width: 740px) {
 
       html,
@@ -90,14 +99,8 @@
   </script>
 </head>
 
-<body style="background: linear-gradient(217deg, #afa, rgba(255,0,0,0) 70.71%),
-linear-gradient(127deg, #b5b9cc, rgba(0,255,0,0) 70.71%),
-linear-gradient(336deg, rgba(140, 0, 255, 0.2), rgba(140, 0, 255, 0) 70.71%);
-margin: 0;
-    background-repeat: no-repeat;
-    background-attachment: fixed;">
-<!-- <body style="background-color: #14151622;"> -->
-  
+<body style="background-color: #14151622;" class="customBg">
+
   <div>
     <!-- Navbar -->
     <nav class="navbar fixed-top navbar-expand-lg navbar-light white scrolling-navbar">
@@ -173,8 +176,7 @@ margin: 0;
     </div>
 
     <!--Main layout-->
-    <main role="main" class="container-fluid no-padding" id="main"
-      style="margin-bottom: 10rem; padding-left: 0;">
+    <main role="main" class="container-fluid no-padding" id="main" style="margin-bottom: 10rem; padding-left: 0;">
       <div style="position: absolute;
       width: 100vw;
       height: 100px;">
@@ -191,17 +193,16 @@ margin: 0;
         </div>
       </div>
       <div style="position: absolute;
+      width: 100vw;
       opacity: 0.2;
       filter: alpha(opacity=20);
       display: flex;
       flex-direction: column;
       justify-content: center; align-items: center;">
         <img src="{% static 'bg-masthead.jpg' %}" style="
-        width: 100vw;
-        
+        width: 100%;
+        height: 100%;
         " />
-        <div style="flex: 1;
-        background-color: #14151622;"></div>
 
       </div>
 
