@@ -1,110 +1,46 @@
 {% extends "projects/base.html" %}
+{% load static %}
 
 {% block content %}
 
 <!--Main layout-->
-<style>
-  .project {
-    visibility: visible;
-    background-color: #fff;
-    background-clip: border-box;
-    border-radius: 0.5rem;
-  }
-
-  .project:hover {
-    color: #fff;
-    background-color: #17a2b8;
-    border-color: #17a2b8;
-  }
-
-  .project:focus,
-  .project.focus {
-    box-shadow: 0 0 0 0.2rem rgba(23, 162, 184, 0.5);
-  }
-
-  .project.disabled,
-  .project:disabled {
-    color: #17a2b8;
-    background-color: transparent;
-  }
-
-  .project:not(:disabled):not(.disabled):active,
-  .project:not(:disabled):not(.disabled).active,
-  .show>.project.dropdown-toggle {
-    color: #fff;
-    background-color: #17a2b8;
-    border-color: #17a2b8;
-  }
-
-  .project:not(:disabled):not(.disabled):active:focus,
-  .project:not(:disabled):not(.disabled).active:focus,
-  .show>.project.dropdown-toggle:focus {
-    box-shadow: 0 0 0 0.2rem rgba(23, 162, 184, 0.5);
-  }
-</style>
 <main>
   <div class="container pt-5">
     <!--Section: Projects v.3-->
     <section class="text-center md-10">
       <hr>
       <h2>Current Projects</h2>
-      {% for proj in newproject %}
-      <!--Grid row-->
-      <div class="row wow fadeIn col-md-10 pt-4">
+      <!-- Portfolio Section -->
+      <section id="portfolio">
+        <div class="container-fluid p-0">
+          <div class="row no-gutters">
 
-        <!--Grid column-->
-        <column class="col-md-8 pb-3">
-
-          <!--Card-->
-          <!-- <div class="card" style="visibility: visible"> -->
-          <div class="project">
-
-            <!--Card image-->
-            {#              <div class="view overlay">#}
-            {#                <img src="https://mdbootstrap.com/img/Photos/Horizontal/E-commerce/Vertical/12.jpg" class="card-img-top"#}
-            {#                  alt="">#}
-            {#                <a>#}
-            {#                  <div class="mask rgba-white-slight"></div>#}
-            {#                </a>#}
-            {#              </div>#}
-            <!--Card image-->
-
-            <!--Card content-->
-            <div class="card-body text-left" style="border-radius: 0.5rem;
-                  background: linear-gradient(217deg, #80f, rgba(255,0,0,0) 70.71%),
-            linear-gradient(127deg, #27282c, rgba(0,255,0,0) 70.71%),
-            linear-gradient(336deg, rgba(0,0,255,.8), rgba(0,0,255,0) 70.71%);">
-              <!--Category & Title-->
-              <a href="" style="color: #319afa">
-                <h5 class="card-title">{{ proj.newproject_text }}</h5>
+            {% for proj in newproject %}
+            <div class="col-lg-4 col-sm-6">
+              <a class="portfolio-box" href="{% url 'newproject-detail' proj.id %}">
+                <img class="img-fluid" src="{% static 'img/portfolio/thumbnails/4.jpg' %}" alt="">
+                <div class="portfolio-box-caption">
+                  <div class="project-category text-white-50">
+                    {{ proj.newproject_text }}
+                  </div>
+                  <div class="project-name">
+                    {{ proj.title }}
+                  </div>
+                  <div class="project-name">
+                    {{ proj.date_posted|date:"F d, Y" }}
+                  </div>
+                </div>
               </a>
-              <!-- <h2><a class="article-title" href="{% url 'newproject-detail' proj.id %}">{{ proj.title }}</a></h2> -->
-              <h2><a class="article-title" style="color: #fff;"
-                  href="{% url 'newproject-detail' proj.id %}">{{ proj.title }}</a></h2>
-              <h6 class="font-weight-bold" style="color: #bbb;">
-                {{ proj.date_posted|date:"F d, Y" }}
-              </h6>
-
             </div>
-            <!--Card content-->
-
+            {% endfor %}
           </div>
-          <!--Card-->
 
-        </column>
-        <!--Grid column-->
-
-      </div>
-      <!--Grid row-->
-      {% endfor %}
-
-      <!--/.Projects Overview-->
-
+        </div>
+      </section>
     </section>
-    <!--Section: Products v.3-->
-
   </div>
 </main>
+
 <!--Main layout-->
 
 {% endblock content %}

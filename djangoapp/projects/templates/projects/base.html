@@ -11,16 +11,9 @@
   <title>{% block head_title %}{% endblock %}</title>
   {% block extra_head %}
   {% endblock %}
-  <!-- Font Awesome -->
-  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.11.2/css/all.css">
-  <!-- Bootstrap core CSS -->
-  <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
-  <!-- Material Design Bootstrap -->
-  <link href="{% static 'css/mdb.min.css' %}" rel="stylesheet">
-  <!-- Your custom styles (optional) -->
-  <link href="{% static 'css/style.min.css' %}" rel="stylesheet">
 
-  <!-- Freelancer Theme -->
+  <!-- creative -->
+
   <!-- Font Awesome Icons -->
   <link href="{% static 'vendor/fontawesome-free/css/all.min.css' %}" rel="stylesheet" type="text/css">
 
@@ -34,52 +27,20 @@
 
   <!-- Theme CSS - Includes Bootstrap -->
   <link href="{% static 'css/creative.min.css' %}" rel="stylesheet">
-  <!-- <link href="{% static 'css/jbstyle.css' %}" rel="stylesheet"> -->
-  <style type="text/css">
-    html,
-    body,
-    header,
-    .carousel {
-      height: 60vh;
-    }
 
-    .footerFixed {
-      position: fixed;
-    }
+  <!-- creative -->
 
-    .topMenu:hover {
-      box-shadow: 0 4px 6px rgba(50, 50, 93, .11), 0 1px 3px rgba(0, 0, 0, .08);
-    }
-
+  <style>
     .customBg {
-      background: linear-gradient(217deg, #afa, rgba(255, 0, 0, 0) 70.71%),
+      background: linear-gradient(217deg, #88d, rgba(255, 0, 0, 0) 50.71%),
         linear-gradient(127deg, #b5b9cc, rgba(0, 255, 0, 0) 70.71%),
         linear-gradient(336deg, rgba(140, 0, 255, 0.2), rgba(140, 0, 255, 0) 70.71%);
       margin: 0;
       background-repeat: no-repeat;
       background-attachment: fixed;
     }
-
-    @media (max-width: 740px) {
-
-      html,
-      body,
-      header,
-      .carousel {
-        height: 100vh;
-      }
-    }
-
-    @media (min-width: 800px) and (max-width: 850px) {
-
-      html,
-      body,
-      header,
-      .carousel {
-        height: 100vh;
-      }
-    }
   </style>
+
   <script>
     function logout() {
       var url = "{% url 'logout' %}";
@@ -87,8 +48,8 @@
         url,
         function (data) {
           $('#popup').html('<div style="visibility: visible; width: 100vw; height: 100vh; display: flex; flex-direction: column; position: fixed; float: none; z-index: 999; background-color: #0008;'
-            + 'justify-content: center; align-items: center;"> <div style="display: flex; flex-direction: column; justify-content: center; align-items: center; width: 80vw; height: 20vh;'
-            + 'border-radius: 0.5rem; background-color: #000b; color: #888;" onclick="refresh()"><a>Logout Success.</a></div></div>');
+            + 'justify-content: center; align-items: center;"><a href="javascript:refresh()" style="text-decoration: none;"><div style="display: flex; flex-direction: column; justify-content: center; align-items: center; width: 80vw; height: 20vh;'
+            + 'border-radius: 0.5rem; background-color: #000b; color: #888;">Logout Success.</div></a></div>');
         }
       );
     }
@@ -99,170 +60,240 @@
   </script>
 </head>
 
-<body style="background-color: #14151622;" class="customBg">
+<body id="page-top" style="background-color: rgb(222, 172, 255);" class="customBg">
 
-  <div>
-    <!-- Navbar -->
-    <nav class="navbar fixed-top navbar-expand-lg navbar-light white scrolling-navbar">
-      <div class="container">
 
-        <!-- Brand -->
-        <a class="navbar-brand waves-effect topMenu" href="{% url 'treesnqs-home' %}"
-          style="padding-left: 10px; padding-right: 10px;">
-          <strong class="blue-text">Trees N' Qs</strong>
-        </a>
+  <!-- Navbar -->
+  <nav class="navbar fixed-top navbar-expand-lg navbar-light white scrolling-navbar" id="mainNav">
+    <div class="container">
 
-        <!-- Collapse -->
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
-          aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-          <span class="navbar-toggler-icon"></span>
-        </button>
+      <!-- Brand -->
+      <a class="navbar-brand waves-effect topMenu" href="{% url 'treesnqs-home' %}"
+        style="padding-left: 10px; padding-right: 10px;">
+        <strong class="blue-text">Trees N' Qs</strong>
+      </a>
 
-        <!-- Links -->
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <!-- Collapse -->
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <!---->
+      <!-- <div class="collapse navbar-collapse" id="navbarResponsive">
+        <ul class="navbar-nav ml-auto my-2 my-lg-0">
+          <li class="nav-item">
+            <a class="nav-link js-scroll-trigger" href="#about">About</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link js-scroll-trigger" href="#services">Services</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link js-scroll-trigger" href="#portfolio">Portfolio</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link js-scroll-trigger" href="#contact">Contact</a>
+          </li>
+        </ul>
+      </div> -->
+      <!---->
 
-          <!-- Left -->
-          <ul class="navbar-nav mr-auto">
-            <li class="nav-item">
-              <a class="nav-link waves-effect topMenu" href="{% url 'treesnqs-about' %}">About</a>
-            </li>
-          </ul>
+      <!-- Links -->
+      <div class="collapse navbar-collapse" id="navbarResponsive">
 
-          <!-- Right -->
-          <ul class="navbar-nav nav-flex-icons">
-            {% if user.is_authenticated %}
-            <li class="nav-item mr-3">
-              {% if user.profile.member %}
-              <span class="badge green z-depth-1 mr-1"> Member </span>
-              <small class="navbar-text">Hello,{{ user.get_username }}</small>
-              {% elif user.profile.nonprofit %}
-              <span class="badge green z-depth-1 mr-1"> Nonprofit </span>
-              <small class="navbar-text">Hello,{{ user.get_username }}</small>
-              {% else %}
-              <small class="navbar-text">Hello,{{ user.get_username }}</small>
-              {% endif %}
-            </li>
-            <li class="nav-item">
-              <a class="nav-link waves-effect" href="{% url 'order:order-summary' %}">
-                <span class="badge blue-gradient z-depth-1 mr-1"> {{ user|cart_item_count }} </span>
-                <i class="fas fa-shopping-cart"></i>
-                <span class="clearfix d-none d-sm-inline-block"> Cart </span>
-              </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-item nav-link" href="{% url 'profile' %}">Profile</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-item nav-link" onclick="logout()">Logout</a>
-            </li>
+        <!-- Left -->
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item">
+            <a class="nav-link waves-effect js-scroll-trigger" href="{% url 'treesnqs-about' %}">About</a>
+          </li>
+        </ul>
+
+        <!-- Right -->
+        <ul class="navbar-nav nav-flex-icons" style="align-items: center;">
+          {% if user.is_authenticated %}
+          <li class="nav-item mr-3">
+            {% if user.profile.member %}
+            <span class="badge green z-depth-1 mr-1"> Member </span>
+            <small class="navbar-text">Hello,{{ user.get_username }}</small>
+            {% elif user.profile.nonprofit %}
+            <span class="badge green z-depth-1 mr-1"> Nonprofit </span>
+            <small class="navbar-text">Hello,{{ user.get_username }}</small>
             {% else %}
-            <li class="nav-item">
-              <a class="nav-item nav-link topMenu" href="{% url 'login' %}">Login</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-item nav-link topMenu" href="{% url 'register' %}">Register</a>
-            </li>
+            <small class="navbar-text">Hello,{{ user.get_username }}</small>
             {% endif %}
-          </ul>
-
-        </div>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link waves-effect js-scroll-trigger" href="{% url 'order:order-summary' %}">
+              <span class="badge blue-gradient z-depth-1 mr-1"> {{ user|cart_item_count }} </span>
+              <i class="fas fa-shopping-cart"></i>
+              <span class="clearfix d-none d-sm-inline-block"> Cart </span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-item nav-link js-scroll-trigger" href="{% url 'profile' %}">Profile</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-item nav-link js-scroll-trigger" href="javascript:logout()">Logout</a>
+          </li>
+          {% else %}
+          <li class="nav-item">
+            <a class="nav-link js-scroll-trigger" href="{% url 'login' %}">Login</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link js-scroll-trigger" href="{% url 'register' %}">Register</a>
+          </li>
+          {% endif %}
+        </ul>
 
       </div>
-    </nav>
-    <!-- Navbar -->
-
-    <div id="popup">
 
     </div>
+  </nav>
+  <!-- Navbar -->
 
-    <!--Main layout-->
-    <main role="main" class="container-fluid no-padding" id="main" style="margin-bottom: 10rem; padding-left: 0;">
-      <div style="position: absolute;
-      width: 100vw;
-      height: 100px;">
-        <div style="float: right;
-        margin-top: 20px;
-        width: 20vw;
-        height: 200px;
-        background-color: #333;
-        border: solid 1vw #333;
-        border-color: transparent transparent #333 transparent;
-        border-radius: 0 0 240px 50%/160px;
-        ">
+  <div id="popup">
+    {% if messages %}
+    <div style="visibility: visible; width: 100vw; height: 100vh; display: flex; flex-direction: column; position: fixed; float: none; z-index: 999; background-color: #0008;
+            justify-content: center; align-items: center;">
 
-        </div>
-      </div>
-      <div style="position: absolute;
-      width: 100vw;
-      opacity: 0.2;
-      filter: alpha(opacity=20);
-      display: flex;
-      flex-direction: column;
-      justify-content: center; align-items: center;">
-        <img src="{% static 'bg-masthead.jpg' %}" style="
-        width: 100%;
-        height: 100%;
-        " />
-
-      </div>
-
-      <div class="row">
-        <div class="col-md-12">
-          {% if messages %}
-          <div class="mt-5 pt-4">
-            {% for message in messages %}
-            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-              {{ message }}
-              <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-              </button>
-            </div>
-            {% endfor %}
-          </div>
-          {% endif %}
-          {% block content %}{% endblock %}
-        </div>
-      </div>
-    </main>
-    <!--Main layout-->
-
-    <!--Footer-->
-    <footer id="footer" class="page-footer text-center font-small mt-4 wow fadeIn footerFixed" style="width: 100vw;">
-
-      <!--Call to action-->
-      <div style="padding-top: 1.5rem; padding-bottom: 1.5rem">
-        <a class="btn btn-outline-dark" href="https://mdbootstrap.com/docs/jquery/getting-started/download/"
-          target="_blank" role="button">Download MDB
-          <i class="fas fa-download ml-2"></i>
-        </a>
-        <a class="btn btn-outline-dark" href="https://mdbootstrap.com/education/bootstrap/" role="button">Start
-          free tutorial
-          <i class="fas fa-graduation-cap ml-2"></i>
-        </a>
-      </div>
-      <!--/.Call to action-->
-
-      <!--Copyright-->
-      <div class="footer-copyright py-3">
-        © 2019 Copyright:
-        <a href="https://mdbootstrap.com/education/bootstrap/" target="_blank"> MDBootstrap.com </a>
-      </div>
-      <!--/.Copyright-->
-
-    </footer>
-    <!--/.Footer-->
+      <!-- <div class="mt-5 pt-4"> -->
+      {% for message in messages %}
+      <!-- <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+          {{ message }}
+          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div> -->
+      <a href="javascript:refresh()" style="text-decoration: none;">
+        <div style="display: flex; flex-direction: column; justify-content: center; align-items: center; width: 80vw; height: 20vh;
+            border-radius: 0.5rem; background-color: #000b; color: #888;">{{ message }}</div>
+      </a>
+      {% endfor %}
+      <!-- </div> -->
+    </div>
+    {% endif %}
   </div>
 
+  <!--Main layout-->
+  <main role="main" class="container-fluid no-padding" id="main" style="margin-bottom: 10rem; padding-left: 0;">
+
+    <div class="row">
+      <div class="col-md-12">
+        {% block content %}{% endblock %}
+      </div>
+    </div>
+  </main>
+  <!--Main layout-->
+
+  <!-- About Section -->
+  <section class="page-section bg-primary" id="about">
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-lg-8 text-center">
+          <!-- <h2 class="text-white mt-0">We've got what you need!</h2>
+          <hr class="divider light my-4">
+          <p class="text-white-50 mb-4">Start Bootstrap has everything you need to get your new website up and running
+            in no time! Choose one of our open source, free to download, and easy to use themes! No strings attached!
+          </p>
+          <a class="btn btn-light btn-xl js-scroll-trigger" href="#services">Get Started!</a> -->
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="page-section" id="services">
+    <div class="container">
+      <!-- <h2 class="text-center mt-0">At Your Service</h2>
+      <hr class="divider my-4">
+      <div class="row">
+        <div class="col-lg-3 col-md-6 text-center">
+          <div class="mt-5">
+            <i class="fas fa-4x fa-gem text-primary mb-4"></i>
+            <h3 class="h4 mb-2">Sturdy Themes</h3>
+            <p class="text-muted mb-0">Our themes are updated regularly to keep them bug free!</p>
+          </div>
+        </div>
+        <div class="col-lg-3 col-md-6 text-center">
+          <div class="mt-5">
+            <i class="fas fa-4x fa-laptop-code text-primary mb-4"></i>
+            <h3 class="h4 mb-2">Up to Date</h3>
+            <p class="text-muted mb-0">All dependencies are kept current to keep things fresh.</p>
+          </div>
+        </div>
+        <div class="col-lg-3 col-md-6 text-center">
+          <div class="mt-5">
+            <i class="fas fa-4x fa-globe text-primary mb-4"></i>
+            <h3 class="h4 mb-2">Ready to Publish</h3>
+            <p class="text-muted mb-0">You can use this design as is, or you can make changes!</p>
+          </div>
+        </div>
+        <div class="col-lg-3 col-md-6 text-center">
+          <div class="mt-5">
+            <i class="fas fa-4x fa-heart text-primary mb-4"></i>
+            <h3 class="h4 mb-2">Made with Love</h3>
+            <p class="text-muted mb-0">Is it really open source if it's not made with love?</p>
+          </div>
+        </div>
+      </div> -->
+    </div>
+  </section>
+
+  <!-- Call to Action Section -->
+  <section class="page-section bg-dark text-white">
+    <div class="container text-center">
+      <!-- <h2 class="mb-4">Free Download at Start Bootstrap!</h2>
+      <a class="btn btn-light btn-xl" href="https://startbootstrap.com/themes/creative/">Download Now!</a> -->
+    </div>
+  </section>
+
+  <!-- Contact Section -->
+  <section class="page-section" id="contact">
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-lg-8 text-center">
+          <h2 class="mt-0">Let's Get In Touch!</h2>
+          <hr class="divider my-4">
+          <p class="text-muted mb-5">Ready to start your next project with us? Give us a call or send us an email and
+            we will get back to you as soon as possible!</p>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-lg-4 ml-auto text-center mb-5 mb-lg-0">
+          <i class="fas fa-phone fa-3x mb-3 text-muted"></i>
+          <div>+1 (202) 555-0149</div>
+        </div>
+        <div class="col-lg-4 mr-auto text-center">
+          <i class="fas fa-envelope fa-3x mb-3 text-muted"></i>
+          <a class="d-block" href="mailto:contact@yourwebsite.com">contact@yourwebsite.com</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="bg-light py-5">
+    <div class="container">
+      <div class="small text-center text-muted">Copyright &copy; 2019 - Start Bootstrap</div>
+    </div>
+  </footer>
+
+
   <!-- SCRIPTS -->
-  <!-- JQuery -->
-  <script type="text/javascript" src="{% static 'js/jquery-3.4.1.min.js' %}"></script>
-  <!-- Bootstrap tooltips -->
-  <script type="text/javascript" src="{% static 'js/popper.min.js' %}"></script>
+
+  <!-- creative -->
+
   <!-- Bootstrap core JavaScript -->
-  <script type="text/javascript" src="{% static 'js/bootstrap.min.js' %}"></script>
-  <!-- MDB core JavaScript -->
-  <script type="text/javascript" src="{% static 'js/mdb.min.js' %}"></script>
-  <!-- Initializations -->
+  <script src="{% static 'vendor/jquery/jquery.min.js' %}"></script>
+  <script src="{% static 'vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+
+  <!-- Plugin JavaScript -->
+  <script src="{% static 'vendor/jquery-easing/jquery.easing.min.js' %}"></script>
+  <script src="{% static 'vendor/magnific-popup/jquery.magnific-popup.min.js' %}"></script>
+
+  <!-- Custom scripts for this template -->
+  <script src="{% static 'js/creative.js' %}"></script>
+
+  <!-- creative -->
+
   <script type="text/javascript">
 
     function heightCompare() {
