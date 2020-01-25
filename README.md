@@ -1,7 +1,7 @@
 # TreesN'Qs Django Web App
 
 This is the web app project for TreesN'Qs. A simple Django site hosted via Kubernetes. It is
-comprised of a very light-weight e-commerce shop for booking project sessions.
+comprised of a very light-weight e-commerce shop for purchasing tickets for colaborative workshops.
 
 ---
 
