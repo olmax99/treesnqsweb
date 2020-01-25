@@ -3,6 +3,7 @@ from django.urls import path
 from payments.views import CheckoutView, OrderSummaryView, AddCouponView, RequestRefundView, \
     PaymentView, RetrievePaymentIntentView
 
+
 # Needed for include(... namespace=...)
 app_name = 'order'
 

@@ -34,13 +34,14 @@ development tool called *Skaffold* which detects changes and redeploys automatic
 Sometimes, for quick debugging or front-end tasks etc. it is faster to run the bare minimum
 Djangoapp in **local Debug mode**.
 
-**NOTE:** Always try to avoid the local runserver and use minikube skaffold dev instead!!!
+**NOTE:** Always try to avoid the local runserver and use minikube skaffold dev instead!!! This
+option might dissappear in future versions of the app.
 
 
 #### Step 1: Local environment variables
 
-All variables inside the .env file will be automatically picked up by the local runserver. In `djangoapp/`
-create the `.env` file:
+All variables inside the .env file will be automatically picked up by the local runserver. In 
+`djangoapp/` create the `.env` file:
 
 .env
 ```
@@ -86,7 +87,8 @@ $ stripe listen --forward-to localhost:8081/stripe/webhook/
 
 #### Step 1: Prepare Helm Repo
 
-To use this repository as a k8s charts repository for deploying the Djangoapp, configure helm:
+To use this GitHub repository as a k8s charts repository for deploying the Djangoapp, configure 
+helm:
 
 ```
 $ helm repo add treesnqsweb https://raw.githubusercontent.com/olmax99/treesnqsweb/master/helmdist
@@ -225,7 +227,8 @@ postgresql:
 
 ```
 
-**NOTE:** The host name of the database is `localhost` by default unless the external database option is activated.
+**NOTE:** The host name of the database is `localhost` by default unless the external database 
+option is activated.
 
 ##### iii. Create Python Requirements
 
@@ -259,8 +262,9 @@ $ kubectl exec -ti djangohelm-5fc4fc7b68-rkhnq -- /bin/bash -c \
 
 ### i. Static Files
 
-The static files are being served using [http://whitenoise.evans.io/en/stable/](http://whitenoise.evans.io/en/stable/) middleware for simplified
-in-docker wsgi static file serving.
+The static files are being served using [http://whitenoise.evans.io/en/stable/](http://whitenoise.evans.io/en/stable/) middleware 
+for simplified in-docker wsgi static file serving. At this point only media files are served 
+from s3.
 
 ```
 MIDDLEWARE = [
@@ -300,7 +304,9 @@ A number of questions I answered myself during the development process.
 - How to access the postgres Pod and postgres client for querying the database manually?
 
 ```
-$ kubectl run djangohelm-postgresql-client --rm --tty -i --restart='Never' --namespace default --image docker.io/bitnami/postgresql:11.6.0-debian-9-r0 --env="PGPASSWORD=super_secret" --command -- psql --host djangohelm-postgresql -U postgres -d postgres -p 5432
+$ kubectl run djangohelm-postgresql-client --rm --tty -i --restart='Never' --namespace default \
+--image docker.io/bitnami/postgresql:11.6.0-debian-9-r0 --env="PGPASSWORD=super_secret" \
+--command -- psql --host djangohelm-postgresql -U postgres -d postgres -p 5432
 
 ```
 
@@ -339,8 +345,8 @@ Currently, the only option seems to stop, delete, and restart Minikube. All data
 
 - How to configure the postgres connection credentials and pass them on from main Chart?
 
-The main chart `values.yaml` file contains the appropriate subchart sections, which start according to the subcharts'
-dependency name. E.g.
+The main chart `values.yaml` file contains the appropriate subchart sections, which start 
+according to the subcharts' dependency name. E.g.
 ```
 ...
 postgresql:
@@ -372,8 +378,8 @@ postgresql:
 
 - Where is the image coming from? Which revision package is being used?
 
-**Helm/Skaffold:** It is definitely coming from `local repo`, unless it does not exist locally. The revision
-being used is always the top one indicated in `index.yaml`. 
+**Helm/Skaffold:** It is definitely coming from `local repo`, unless it does not exist locally. 
+The revision being used is always the top one indicated in `index.yaml`. 
 
 - How to use a local docker image in Minikube without a remote docker registry?
 

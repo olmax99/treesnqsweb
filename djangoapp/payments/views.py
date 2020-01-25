@@ -1,4 +1,3 @@
-import json
 import random
 import string
 
@@ -18,14 +17,8 @@ from djstripe.sync import sync_subscriber
 from payments.forms import CheckoutForm, CouponForm, RefundForm
 from payments.models import Order, BillingAddress, RefundRequest
 
-
 import logging
-
-# import djstripe
-# from djstripe import webhooks
-
 import stripe
-from stripe import error
 
 """
 See all stripe webhook event types 
@@ -129,6 +122,7 @@ def order_reference():
         random.choices(string.ascii_uppercase + string.digits, k=4)) for _ in range(4)])
 
 
+# @method_decorator(csrf_exempt, name='dispatch')
 class RetrievePaymentIntentView(View):
     def post(self, *args, **kwargs):
         try:
@@ -150,6 +144,7 @@ class RetrievePaymentIntentView(View):
             return redirect('treesnqs-home')
 
 
+# @method_decorator(csrf_exempt, name='dispatch')
 class PaymentView(LoginRequiredMixin, View):
     def get(self, *args, **kwargs):
         customer_qs = Customer.objects.filter(subscriber=self.request.user)
