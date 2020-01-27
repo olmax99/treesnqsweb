@@ -29,6 +29,24 @@
   <link href="{% static 'css/creative.min.css' %}" rel="stylesheet">
 
   <!-- creative -->
+
+  <script>
+    function logout() {
+      var url = "{% url 'logout' %}";
+      $.get(
+        url,
+        function (data) {
+          $('#popup').html('<div style="visibility: visible; width: 100vw; height: 100vh; display: flex; flex-direction: column; position: fixed; float: none; z-index: 999; background-color: #0008;'
+            + 'justify-content: center; align-items: center;"><a href="javascript:refresh()" style="text-decoration: none;"><div style="display: flex; flex-direction: column; justify-content: center; align-items: center; width: 80vw; height: 20vh;'
+            + 'border-radius: 0.5rem; background-color: #000b; color: #888;">Logout Success.</div></a></div>');
+        }
+      );
+    }
+
+    function refresh() {
+      location.reload();
+    }
+  </script>
 </head>
 
 <body id="page-top">
@@ -140,63 +158,6 @@
     {% endif %}
   </div>
 
-  <header class="masthead">
-    {% block content %}{% endblock %}
-  </header>
-
-  <!-- About Section -->
-  <section class="page-section bg-primary" id="about">
-    <div class="container">
-      <div class="row justify-content-center">
-        <div class="col-lg-8 text-center">
-          <!-- <h2 class="text-white mt-0">We've got what you need!</h2>
-          <hr class="divider light my-4">
-          <p class="text-white-50 mb-4">Start Bootstrap has everything you need to get your new website up and running
-            in no time! Choose one of our open source, free to download, and easy to use themes! No strings attached!
-          </p>
-          <a class="btn btn-light btn-xl js-scroll-trigger" href="#services">Get Started!</a> -->
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section class="page-section" id="services">
-    <div class="container">
-      <!-- <h2 class="text-center mt-0">At Your Service</h2>
-      <hr class="divider my-4">
-      <div class="row">
-        <div class="col-lg-3 col-md-6 text-center">
-          <div class="mt-5">
-            <i class="fas fa-4x fa-gem text-primary mb-4"></i>
-            <h3 class="h4 mb-2">Sturdy Themes</h3>
-            <p class="text-muted mb-0">Our themes are updated regularly to keep them bug free!</p>
-          </div>
-        </div>
-        <div class="col-lg-3 col-md-6 text-center">
-          <div class="mt-5">
-            <i class="fas fa-4x fa-laptop-code text-primary mb-4"></i>
-            <h3 class="h4 mb-2">Up to Date</h3>
-            <p class="text-muted mb-0">All dependencies are kept current to keep things fresh.</p>
-          </div>
-        </div>
-        <div class="col-lg-3 col-md-6 text-center">
-          <div class="mt-5">
-            <i class="fas fa-4x fa-globe text-primary mb-4"></i>
-            <h3 class="h4 mb-2">Ready to Publish</h3>
-            <p class="text-muted mb-0">You can use this design as is, or you can make changes!</p>
-          </div>
-        </div>
-        <div class="col-lg-3 col-md-6 text-center">
-          <div class="mt-5">
-            <i class="fas fa-4x fa-heart text-primary mb-4"></i>
-            <h3 class="h4 mb-2">Made with Love</h3>
-            <p class="text-muted mb-0">Is it really open source if it's not made with love?</p>
-          </div>
-        </div>
-      </div> -->
-    </div>
-  </section>
-
   <!-- Call to Action Section -->
   <section class="page-section bg-dark text-white">
     <div class="container text-center">
@@ -208,24 +169,7 @@
   <!-- Contact Section -->
   <section class="page-section" id="contact">
     <div class="container">
-      <div class="row justify-content-center">
-        <div class="col-lg-8 text-center">
-          <h2 class="mt-0">Let's Get In Touch!</h2>
-          <hr class="divider my-4">
-          <p class="mb-5">Ready to start your next project with us? Give us a call or send us an email and
-            we will get back to you as soon as possible!</p>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-lg-4 ml-auto text-center mb-5 mb-lg-0">
-          <i class="fas fa-phone fa-3x mb-3 text-muted"></i>
-          <div>+1 (202) 555-0149</div>
-        </div>
-        <div class="col-lg-4 mr-auto text-center">
-          <i class="fas fa-envelope fa-3x mb-3 text-muted"></i>
-          <a class="d-block" href="mailto:contact@yourwebsite.com">contact@yourwebsite.com</a>
-        </div>
-      </div>
+      {% block content %}{% endblock %}
     </div>
   </section>
 
