@@ -18,7 +18,9 @@
             {% for proj in newproject %}
             <div>
               <a class="portfolio-box" href="{% url 'newproject-detail' proj.id %}">
-                <img class="img-fluid" src="{% static 'img/portfolio/thumbnails/4.jpg' %}" alt="">
+                <div>
+                  <img class="img-fluid" src="{% static 'img/portfolio/thumbnails/4.jpg' %}" alt="">
+                </div>
                 <div class="portfolio-box-caption">
                   <div class="project-category text-white-50">
                     {{ proj.newproject_text }}
