@@ -30,17 +30,6 @@
 
   <!-- creative -->
 
-  <style>
-    .customBg {
-      background: linear-gradient(217deg, #88d, rgba(255, 0, 0, 0) 50.71%),
-        linear-gradient(127deg, #b5b9cc, rgba(0, 255, 0, 0) 70.71%),
-        linear-gradient(336deg, rgba(140, 0, 255, 0.2), rgba(140, 0, 255, 0) 70.71%);
-      margin: 0;
-      background-repeat: no-repeat;
-      background-attachment: fixed;
-    }
-  </style>
-
   <script>
     function logout() {
       var url = "{% url 'logout' %}";
@@ -60,8 +49,7 @@
   </script>
 </head>
 
-<body id="page-top" style="background-color: rgb(222, 172, 255);" class="customBg">
-
+<body id="page-top">
 
   <!-- Navbar -->
   <nav class="navbar fixed-top navbar-expand-lg navbar-light white scrolling-navbar" id="mainNav">
@@ -155,20 +143,12 @@
     <div style="visibility: visible; width: 100vw; height: 100vh; display: flex; flex-direction: column; position: fixed; float: none; z-index: 999; background-color: #0008;
             justify-content: center; align-items: center;">
 
-      <!-- <div class="mt-5 pt-4"> -->
       {% for message in messages %}
-      <!-- <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-          {{ message }}
-          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div> -->
       <a href="javascript:refresh()" style="text-decoration: none;">
         <div style="display: flex; flex-direction: column; justify-content: center; align-items: center; width: 80vw; height: 20vh;
             border-radius: 0.5rem; background-color: #000b; color: #888;">{{ message }}</div>
       </a>
       {% endfor %}
-      <!-- </div> -->
     </div>
     {% endif %}
   </div>
