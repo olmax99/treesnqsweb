@@ -3987,6 +3987,8 @@ input[type="button"].btn-block {
 .navbar-nav {
   display: flex;
   flex-direction: column;
+  justify-content: center;
+  align-items: center;
   padding-left: 0;
   margin-bottom: 0;
   list-style: none;
