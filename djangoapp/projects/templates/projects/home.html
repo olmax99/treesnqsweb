@@ -14,13 +14,22 @@
       <section id="portfolio">
         <div class="container-fluid p-0">
           <div class="row no-gutters" style="flex-direction: column;">
-
             {% for proj in newproject %}
             <div>
               <a class="portfolio-box" href="{% url 'newproject-detail' proj.id %}">
-                <div>
-                  <img class="img-fluid" src="{% static 'img/portfolio/thumbnails/4.jpg' %}" alt="">
+                <div class="flex-row" style="display: flex;
+                align-items: center;
+                justify-content: center;">
+                {% if forloop.counter|divisibleby:2 %}
+                  <div style="height: 100%; width: 50%;"></div>
+                  <img class="img-fluid" style="float: right;" src="{% static 'img/portfolio/thumbnails/4.jpg' %}" alt="">
+                {% else %}
+                  <img class="img-fluid" style="float: left;" src="{% static 'img/portfolio/thumbnails/4.jpg' %}" alt="">
+                  <div style="height: 100%; width: 50%;"></div>
+                {% endif %}
+                  
                 </div>
+                  
                 <div class="portfolio-box-caption">
                   <div class="project-category text-white-50">
                     {{ proj.newproject_text }}
