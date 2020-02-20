@@ -106,7 +106,7 @@
 
   {% if messages %}
   <div id="popup" style="visibility: visible; width: 100vw; height: 100vh; display: flex; flex-direction: column; position: fixed; float: none; z-index: 999;
-            justify-content: center; align-items: center;">
+  justify-content: center; align-items: center;">
     <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
 
       {% for message in messages %}
@@ -118,13 +118,15 @@
     </div>
     <script>
       setTimeout(function () {
-        $('#popup').css("visibility", "hidden");
-        $('#popup').html("");
+        $('#popup').fadeOut(2000, function () {
+          $('#popup').css("visibility", "hidden");
+          $('#popup').html("");
+        });
       }, 2000);
     </script>
     {% else %}
   <div id="popup" style="visibility: hidden; width: 100vw; height: 100vh; display: flex; flex-direction: column; position: fixed; float: none; z-index: 999;
-            justify-content: center; align-items: center;">
+              justify-content: center; align-items: center;">
     {% endif %}
   </div>
 
@@ -175,6 +177,7 @@
       $.get(
         url,
         function (data) {
+          $('#popup').css("visibility", "visible");
           $('#popup').html(
             '<div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">'
             + '<a href="javascript:refresh()" style="text-decoration: none;">'
@@ -185,6 +188,7 @@
 
           setTimeout(function () {
             $('#popup').fadeOut(2000, function () {
+              $('#popup').css("visibility", "hidden");
               $('#popup').html("");
               refresh();
             });
