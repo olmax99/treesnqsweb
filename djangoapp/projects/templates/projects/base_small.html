@@ -1,0 +1,206 @@
+{% load static %}
+{% load cart_template_tags %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <title>{% block head_title %}{% endblock %}</title>
+  {% block extra_head %}
+  {% endblock %}
+
+  <!-- creative -->
+
+  <!-- Font Awesome Icons -->
+  <link href="{% static 'vendor/fontawesome-free/css/all.min.css' %}" rel="stylesheet" type="text/css">
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css?family=Merriweather+Sans:400,700" rel="stylesheet">
+  <link href='https://fonts.googleapis.com/css?family=Merriweather:400,300,300italic,400italic,700,700italic'
+    rel='stylesheet' type='text/css'>
+
+  <!-- Plugin CSS -->
+  <link href="{% static 'vendor/magnific-popup/magnific-popup.css' %}" rel="stylesheet">
+
+  <!-- Theme CSS - Includes Bootstrap -->
+  <link href="{% static 'css/creative.css' %}" rel="stylesheet">
+
+  <!-- creative -->
+</head>
+
+<body id="page-top">
+
+  <!-- Navbar -->
+  <nav class="navbar fixed-top navbar-expand-lg navbar-light white scrolling-navbar" id="mainNav">
+    <div class="container">
+
+      <!-- Brand -->
+      <a class="navbar-brand waves-effect" href="{% url 'treesnqs-home' %}"
+        style="padding-left: 10px; padding-right: 10px;">
+        <strong class="blue-text">Trees N' Qs</strong>
+      </a>
+
+      <!-- Collapse -->
+      <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse"
+        data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false"
+        aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <!---->
+
+      <!-- Links -->
+      <div class="collapse navbar-collapse" id="navbarResponsive">
+
+        <!-- Left -->
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item">
+            <a class="nav-link waves-effect js-scroll-trigger" href="{% url 'treesnqs-about' %}">About</a>
+          </li>
+        </ul>
+
+        <!-- Right -->
+        <ul class="navbar-nav nav-flex-icons align-items-center">
+          {% if user.is_authenticated %}
+          <li class="nav-item mr-3">
+            {% if user.profile.member %}
+            <span class="badge green z-depth-1 mr-1"> Member </span>
+            <small class="navbar-text">Hello,{{ user.get_username }}</small>
+            {% elif user.profile.nonprofit %}
+            <span class="badge green z-depth-1 mr-1"> Nonprofit </span>
+            <small class="navbar-text">Hello,{{ user.get_username }}</small>
+            {% else %}
+            <small class="navbar-text">Hello,{{ user.get_username }}</small>
+            {% endif %}
+          </li>
+          <li class="nav-item">
+            <a class="nav-link waves-effect js-scroll-trigger" href="{% url 'order:order-summary' %}">
+              <span class="badge blue-gradient z-depth-1 mr-1"> {{ user|cart_item_count }} </span>
+              <i class="fas fa-shopping-cart"></i>
+              <span class="clearfix d-none d-sm-inline-block"> Cart </span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-item nav-link js-scroll-trigger" href="{% url 'profile' %}">Profile</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-item nav-link js-scroll-trigger" href="javascript:logout()">Logout</a>
+          </li>
+          {% else %}
+          <li class="nav-item">
+            <a class="nav-link js-scroll-trigger" href="{% url 'login' %}">Login</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link js-scroll-trigger" href="{% url 'register' %}">Register</a>
+          </li>
+          {% endif %}
+        </ul>
+
+      </div>
+
+    </div>
+  </nav>
+  <!-- Navbar -->
+
+  {% if messages %}
+  <div id="popup" style="visibility: visible; width: 100vw; height: 100vh; display: flex; flex-direction: column; position: fixed; float: none; z-index: 999;
+  justify-content: center; align-items: center;">
+    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+
+      {% for message in messages %}
+      <a href="javascript:refresh()" style="text-decoration: none;">
+        <div style="display: flex; flex-direction: column; justify-content: center; align-items: center; width: 80vw; height: 20vh;
+            border-radius: 0.5rem; background-color: #000b; color: #888;">{{ message }}</div>
+      </a>
+      {% endfor %}
+    </div>
+    <script>
+      setTimeout(function () {
+        $('#popup').fadeOut(2000, function () {
+          $('#popup').css("visibility", "hidden");
+          $('#popup').html("");
+        });
+      }, 2000);
+    </script>
+    {% else %}
+  <div id="popup" style="visibility: hidden; width: 100vw; height: 100vh; display: flex; flex-direction: column; position: fixed; float: none; z-index: 999;
+              justify-content: center; align-items: center;">
+    {% endif %}
+  </div>
+
+  <!-- Call to Action Section -->
+  <section class="page-section bg-dark text-white">
+    <div class="container text-center">
+      <!-- <h2 class="mb-4">Free Download at Start Bootstrap!</h2>
+      <a class="btn btn-light btn-xl" href="https://startbootstrap.com/themes/creative/">Download Now!</a> -->
+    </div>
+  </section>
+
+  <!-- Contact Section -->
+  <section class="page-section" id="contact">
+    <div class="container">
+      {% block content %}{% endblock %}
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="bg-light py-5">
+    <div class="container">
+      <div class="small text-center text-muted">Copyright &copy; 2019 - Start Bootstrap</div>
+    </div>
+  </footer>
+
+
+  <!-- SCRIPTS -->
+
+  <!-- creative -->
+
+  <!-- Bootstrap core JavaScript -->
+  <script src="{% static 'vendor/jquery/jquery.min.js' %}"></script>
+  <script src="{% static 'vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+
+  <!-- Plugin JavaScript -->
+  <script src="{% static 'vendor/jquery-easing/jquery.easing.min.js' %}"></script>
+  <script src="{% static 'vendor/magnific-popup/jquery.magnific-popup.min.js' %}"></script>
+
+  <!-- Custom scripts for this template -->
+  <script src="{% static 'js/creative.js' %}"></script>
+
+  <!-- creative -->
+
+  <script type="text/javascript">
+
+    function logout() {
+      var url = "{% url 'logout' %}";
+      $.get(
+        url,
+        function (data) {
+          $('#popup').css("visibility", "visible");
+          $('#popup').html(
+            '<div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">'
+            + '<a href="javascript:refresh()" style="text-decoration: none;">'
+            + '<div style="display: flex; flex-direction: column; justify-content: center; align-items: center; width: 80vw; height: 20vh;'
+            + 'border-radius: 0.5rem; background-color: #000b; color: #888;">Logout Success.</div>'
+            + '</a>'
+            + '</div>');
+
+          setTimeout(function () {
+            $('#popup').fadeOut(2000, function () {
+              $('#popup').css("visibility", "hidden");
+              $('#popup').html("");
+              refresh();
+            });
+          }, 2000);
+        }
+      );
+    }
+
+    function refresh() {
+      location.reload();
+    }
+  </script>
+</body>
+
+</html>

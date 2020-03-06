@@ -1,4 +1,4 @@
-{% extends "projects/base.html" %}
+{% extends "projects/base_small.html" %}
 {% load crispy_forms_tags %}
 {% block content %}
   <!--Main layout-->
@@ -10,7 +10,7 @@
             <div class="col-6 offset-3">
               <div class="media">
                 <img class="rounded-circle account-img" src="{{ user.profile.image.url }}">
-                <div class="media-body">
+                <div class="media-body" style="margin-left: 20px;">
                   <h2 class="account-heading">{{ user.username }}</h2>
                   <p class="text-secondary">{{ user.email }}</p>
                 </div>

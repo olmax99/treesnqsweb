@@ -50,7 +50,7 @@ def add_to_cart(request, pk):
             if order_item.quantity < 3:
                 order_item.quantity += 1
                 order_item.save()
-                messages.info(request, "The quantity was updated.")
+                # messages.info(request, "The quantity was updated.")
                 return redirect('order:order-summary')
             else:
                 messages.info(request, "You've reached the maximum per purchase.")
@@ -124,7 +124,7 @@ def remove_single_item_from_cart(request, pk):
                     user=request.user,
                     ordered=False
                 )[0].delete()
-            messages.info(request, "The item quantity was updated.")
+            # messages.info(request, "The item quantity was updated.")
             return redirect('order:order-summary')
         else:
             messages.info(request, "This item is not in your cart, yet.")
